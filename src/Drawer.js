@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import './Drawer.css';
+import account from './img/account_blue.svg';
+import star from './img/star_orange.svg';
 
 export default class Sidebar extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     console.log('Drawer render()');
     let props = this.props;
@@ -13,18 +11,46 @@ export default class Sidebar extends Component {
       <div className='drawer'>
         <div className='family'>
           <div className='list'>
+            <div className='list__title'>
+              <h4>{props.family.name}</h4>
+            </div>
             <div className='list__header'>
-              <h5>{props.family.name}</h5>
+              <h5>Family members</h5>
             </div>
             {
               props.family.members &&
               props.family.members.map(function(member, i) {
                 return (
                   <a key={i}
-                  className={'list__item' + (props.marked === member.name ? ' active' : '')}
+                  className={'list__item' + (props.marked === member._id ? ' active list__item--blue' : '')}
                   href={'#' + member.name}
-                  onClick={() => props.setMarked(member.name)}>
+                  onClick={() => {
+                    props.setMarked(member._id);
+                    props.requestOne('5804aa86795236fdc199b606', member._id);
+                  }}>
+                    <img src={account}
+                    className='list__item-icon'
+                    role='presentation' />
                     {member.name}
+                  </a>
+                );
+              })
+            }
+            <div className='list__header'>
+              <h5>Favorites</h5>
+            </div>
+            {
+              props.family.favorites &&
+              props.family.favorites.map(function(favorite, i) {
+                return (
+                  <a key={i}
+                  className={'list__item' + (props.marked === favorite._id ? ' active' : '')}
+                  href={'#' + favorite.name}
+                  onClick={() => props.setMarked(favorite._id)}>
+                    <img src={star}
+                    className='list__item-icon'
+                    role='presentation' />
+                    {favorite.name}
                   </a>
                 );
               })
@@ -34,14 +60,30 @@ export default class Sidebar extends Component {
         <div className='details'>
           {
             this.props.family.members &&
-            props.family.members.map(function(member, i) {
-              if (member.name === props.marked) {
+            this.props.family.members.map(function(member, i) {
+              if (member._id === props.marked) {
                 return (
                   <div key={i}>
                     <h5>{member.name}</h5>
                     <span>{member.email || member.gmail}</span>
                   </div>
                 );
+              } else {
+                return null;
+              }
+            })
+          }
+          {
+            this.props.family.favorites &&
+            this.props.family.favorites.map(function(favorite, i) {
+              if (favorite._id === props.marked) {
+                return (
+                  <div key={i}>
+                    <h5>{favorite.name}</h5>
+                  </div>
+                );
+              } else {
+                return null;
               }
             })
           }

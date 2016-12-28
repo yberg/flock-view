@@ -3,6 +3,7 @@ import './GoogleMap.css';
 const API_KEY = require('../config').apiKey;
 
 var self;
+let markerIconUrl = 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_';
 
 export default class GoogleMap extends Component {
   constructor(props) {
@@ -19,12 +20,12 @@ export default class GoogleMap extends Component {
     // so Google Maps can invoke it
     window.initMap = this.initMap;
     // Asynchronously load the Google Maps script, passing in the callback reference
-    loadJS('https://maps.googleapis.com/maps/api/js?key=' + API_KEY + '&callback=initMap');
+    loadJS('https://maps.googleapis.com/maps/api/js?key=' + API_KEY +
+      '&callback=initMap');
   }
 
   initMap() {
     self.google = this.google;
-    console.log('google');
     const home = {lat: 59.5068518, lng: 17.7573347};
     self.map = new this.google.maps.Map(self.mapRef, {
       zoom: 14,
@@ -36,30 +37,30 @@ export default class GoogleMap extends Component {
   addMarkers() {
     // Add family member markers
     this.props.family.members.forEach((member) => {
-      var marker = new self.google.maps.Marker({
+      let defaultMarkerIcon =  markerIconUrl + 'red' + member.name.charAt(0).toUpperCase() + '.png';
+      let marker = new self.google.maps.Marker({
         position: {lat: member.lat, lng: member.long},
         map: self.map,
-        title: member.name
+        title: member._id,
+        icon: defaultMarkerIcon
       });
-      member.marker = marker;
-      if (self.props.marked === member.name) {
-        marker.setLabel('marked');
-      }
       marker.addListener('click', onMarkerClick.bind(marker));
+      member.marker = marker;
+      member.defaultMarkerIcon = defaultMarkerIcon;
     });
 
-    // Add favorites
+    // Add family favorites markers
     this.props.family.favorites.forEach((favorite) => {
-      var marker = new self.google.maps.Marker({
+      let defaultMarkerIcon = markerIconUrl + 'orange' + favorite.name.charAt(0).toUpperCase() + '.png';
+      let marker = new self.google.maps.Marker({
         position: {lat: favorite.lat, lng: favorite.long},
         map: self.map,
-        title: favorite.name
+        title: favorite._id,
+        icon: defaultMarkerIcon
       });
-      favorite.marker = marker;
-      if (self.props.marked === favorite.name) {
-        marker.setLabel('marked');
-      }
       marker.addListener('click', onMarkerClick.bind(marker));
+      favorite.marker = marker;
+      favorite.defaultMarkerIcon = defaultMarkerIcon;
     });
 
     // Update state
@@ -68,17 +69,20 @@ export default class GoogleMap extends Component {
     });
   }
 
-  render() {
-    console.log('GoogleMap render()');
-    this.state.family.members.forEach((member) => {
-      if (member.marker) {
-        if (this.props.marked === member.name) {
-          member.marker.setIcon(new this.google.maps.MarkerImage('http://www.googlemapsmarkers.com/v1/ffeb3b/'));
-        } else {
-          member.marker.setIcon(null);
+  componentDidUpdate() {
+    this.state.family.favorites.concat(self.state.family.members)
+    .forEach((item) => {
+      if (item.marker) {
+        item.marker.setPosition({lat: item.lat, lng: item.long});
+        item.marker.setIcon(item.defaultMarkerIcon);
+        if (item._id === self.props.marked) {
+          item.marker.setIcon(markerIconUrl + 'blue' + item.name.charAt(0).toUpperCase() + '.png');
         }
       }
     });
+  }
+
+  render() {
     return (
       <div className='google-map'>
         <div className='map' ref='map'></div>
@@ -88,13 +92,15 @@ export default class GoogleMap extends Component {
 }
 
 function onMarkerClick() {
-  self.props.setMarked(this.getTitle());
-  console.log('clicked on marker');
+  let id = this.getTitle();
+  console.log('clicked marker: ' + id);
+  self.props.setMarked(id);
+  self.props.requestOne('5804aa86795236fdc199b606', id);
 }
 
 function loadJS(src) {
-  var ref = window.document.getElementsByTagName("script")[0];
-  var script = window.document.createElement("script");
+  var ref = window.document.getElementsByTagName('script')[0];
+  var script = window.document.createElement('script');
   script.src = src;
   ref.parentNode.insertBefore(script, ref);
 }

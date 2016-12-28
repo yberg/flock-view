@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import jsonp from 'jsonp';
+import io from 'socket.io-client';
 import './App.css';
 
+import Login from './Login';
 import Drawer from './Drawer';
 import GoogleMap from './GoogleMap';
 
-var family = {
+let socket = io('http://localhost:3001', {query: '_id=5804aa86795236fdc199b606'});
+
+let family = {
   id: null,
   name: null,
   favorites: [],
@@ -17,29 +21,84 @@ export default class App extends Component {
     super(props);
     this.state = {
       marked: null,
-      family: family
+      family: family,
+      isLoggedIn: false
     };
     this.getFamily('5804c0fc795236fdc199b614');
     this.getFamilyMembers('5804c0fc795236fdc199b614');
   }
 
+  componentDidMount() {
+    socket.on('newConnection', (data) => {
+      console.log(data);
+    }).on('updateRequest', (data) => {
+      // Update self
+      /*socket.emit('updateSelf', {
+        _id: 'test_id',
+
+      });*/
+    }).on('updatedOne', (data) => {
+      // Updated requested user
+      console.log('updatedOne: ');
+      console.log(data);
+      this.state.family.members.forEach((member) => {
+        if (member._id === data._id) {
+          member.lat = data.lat;
+          member.long = data.long;
+          member.lastUpdated = data.lastUpdated;
+        }
+      });
+      this.setState({});
+    }).on('socketError', (data) => {
+      // Socket error
+    });
+  }
+
   render() {
     return (
       <div className='App'>
-        <Drawer
-          family={this.state.family}
-          setMarked={this.setMarked.bind(this)}
-          marked={this.state.marked}></Drawer>
-        <GoogleMap
-          family={this.state.family}
-          setMarked={this.setMarked.bind(this)}
-          marked={this.state.marked}></GoogleMap>
+        {
+          !this.state.isLoggedIn ?
+          <Login
+            login={this.login.bind(this)}
+            isLoggedIn={this.state.isLoggedIn}></Login> : null
+        }
+        {
+          this.state.isLoggedIn ?
+          <Drawer
+            family={this.state.family}
+            setMarked={this.setMarked.bind(this)}
+            marked={this.state.marked}
+            requestOne={this.requestOne.bind(this)}
+            isLoggedIn={this.state.isLoggedIn}></Drawer> : null
+        }
+        {
+          this.state.isLoggedIn ?
+          <GoogleMap
+            family={this.state.family}
+            setMarked={this.setMarked.bind(this)}
+            marked={this.state.marked}
+            requestOne={this.requestOne.bind(this)}
+            isLoggedIn={this.state.isLoggedIn}></GoogleMap> : null
+        }
       </div>
     );
   }
 
+  login() {
+    console.log('login!!');
+    this.setState({isLoggedIn: true});
+  }
+
   setMarked(marked) {
     this.setState({marked: marked});
+  }
+
+  requestOne(src, dest) {
+    socket.emit('requestOne', {
+      src: src,
+      dest: dest
+    });
   }
 
   getFamilyMembers(familyId) {
