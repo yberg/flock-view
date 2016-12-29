@@ -16,6 +16,11 @@ export default class GoogleMap extends Component {
 
   componentDidMount() {
     self.mapRef = this.refs.map;
+    if (this.props.google) {
+      self.google = this.props.google;
+      this.initMap();
+      return;
+    }
     // Connect the initMap() function within this class to the global window context,
     // so Google Maps can invoke it
     window.initMap = this.initMap;
@@ -25,9 +30,12 @@ export default class GoogleMap extends Component {
   }
 
   initMap() {
-    self.google = this.google;
+    if (!self.google) {
+      self.google = this.google;
+      self.props.setGoogle(this.google);
+    }
     const home = {lat: 59.5068518, lng: 17.7573347};
-    self.map = new this.google.maps.Map(self.mapRef, {
+    self.map = new self.google.maps.Map(self.mapRef, {
       zoom: 14,
       center: home
     });
@@ -99,8 +107,10 @@ function onMarkerClick() {
 }
 
 function loadJS(src) {
-  var ref = window.document.getElementsByTagName('script')[0];
-  var script = window.document.createElement('script');
+  let script = window.document.createElement('script');
   script.src = src;
+  script.async = true;
+  script.defer = true;
+  var ref = window.document.getElementsByTagName('script')[0];
   ref.parentNode.insertBefore(script, ref);
 }

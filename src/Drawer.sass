@@ -10,45 +10,59 @@
   flex-direction: column
   justify-content: space-between
 
-.family
-  .list
+  .drawer__segment
+    padding: 10px 20px
+
+.list
+  position: relative
+  overflow: hidden
+  display: block
+  padding: 4px 0
+
+  &:after
+    content : ''
+    position: absolute
+    bottom: 0
+    left: 20px
+    width: calc(100% - 40px)
+    height: 1px
+    border-bottom: 1px solid $border-color
+
+  .list__title
+    margin-left: 20px
+    margin-bottom: 12px
+
+  .list__header
+    margin: 12px 0 8px 20px
+
+  a.list__item
     position: relative
-    overflow: hidden
     display: block
-    padding: 4px 0
-    margin-bottom: 20px
-    border-bottom: .5px solid $gray300
+    font-size: 14px
+    height: 16px
+    line-height: 16px
+    padding: 8px 8px 8px 54px
+    color: $gray900
+    text-decoration: none
 
-    .list__title
-      margin-left: 20px
-      margin-bottom: 12px
+    &:hover
+      background: $gray200
 
-    .list__header
-      margin: 12px 0 8px 20px
+    &.active
+      background: $gray300
+      font-weight: 500
 
-    a.list__item
-      position: relative
-      display: block
-      font-size: 14px
-      height: 16px
-      line-height: 16px
-      padding: 8px 8px 8px 46px
-      color: $gray900
-      text-decoration: none
+      &.active--blue
+        border-right: 3px solid $blue500
 
-      &:hover
-        background: $gray200
+      &.active--amber
+        border-right: 3px solid $amber500
 
-      &.active
-        background: $gray300
-        font-weight: 500
-
-      .list__item-icon
-        position: absolute
-        left: 18px
-        top: calc(50% - 10px)
-        height: 20px
-        //filter: drop-shadow(0 1px 1px rgba(0,0,0,0.12))
+    .list__item__icon
+      position: absolute
+      left: 24px
+      top: calc(50% - 10px)
+      height: 20px
 
 .details
   padding: 20px

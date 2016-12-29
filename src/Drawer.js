@@ -1,35 +1,33 @@
 import React, { Component } from 'react';
 import './Drawer.css';
 import account from './img/account_blue.svg';
-import star from './img/star_orange.svg';
+import star from './img/star_amber.svg';
+import settings from './img/settings_gray.svg';
+import exit from './img/exit_white.svg';
 
 export default class Sidebar extends Component {
   render() {
-    console.log('Drawer render()');
     let props = this.props;
     return (
       <div className='drawer'>
-        <div className='family'>
+        <div>
           <div className='list'>
             <div className='list__title'>
               <h4>{props.family.name}</h4>
-            </div>
-            <div className='list__header'>
-              <h5>Family members</h5>
             </div>
             {
               props.family.members &&
               props.family.members.map(function(member, i) {
                 return (
                   <a key={i}
-                  className={'list__item' + (props.marked === member._id ? ' active list__item--blue' : '')}
                   href={'#' + member.name}
+                  className={'list__item' + (props.marked === member._id ? ' active active--blue' : '')}
                   onClick={() => {
                     props.setMarked(member._id);
                     props.requestOne('5804aa86795236fdc199b606', member._id);
                   }}>
                     <img src={account}
-                    className='list__item-icon'
+                    className='list__item__icon'
                     role='presentation' />
                     {member.name}
                   </a>
@@ -44,17 +42,34 @@ export default class Sidebar extends Component {
               props.family.favorites.map(function(favorite, i) {
                 return (
                   <a key={i}
-                  className={'list__item' + (props.marked === favorite._id ? ' active' : '')}
                   href={'#' + favorite.name}
+                  className={'list__item' + (props.marked === favorite._id ? ' active active--amber' : '')}
                   onClick={() => props.setMarked(favorite._id)}>
                     <img src={star}
-                    className='list__item-icon'
+                    className='list__item__icon'
                     role='presentation' />
                     {favorite.name}
                   </a>
                 );
               })
             }
+          </div>
+          <div className='list'>
+            <a href='#Settings' className='list__item'>
+              <img src={settings}
+              className='list__item__icon'
+              role='presentation' />
+              Settings
+            </a>
+          </div>
+          <div className='drawer__segment'>
+            <div className='input-group'>
+              <button className='button--red center'
+              onClick={this.props.logout}>
+                <img src={exit} role='presentation' />
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
         <div className='details'>

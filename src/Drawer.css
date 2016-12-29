@@ -7,36 +7,48 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between; }
+  .drawer .drawer__segment {
+    padding: 10px 20px; }
 
-.family .list {
+.list {
   position: relative;
   overflow: hidden;
   display: block;
-  padding: 4px 0;
-  margin-bottom: 20px;
-  border-bottom: 0.5px solid #e0e0e0; }
-  .family .list .list__title {
+  padding: 4px 0; }
+  .list:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    width: calc(100% - 40px);
+    height: 1px;
+    border-bottom: 1px solid #e0e0e0; }
+  .list .list__title {
     margin-left: 20px;
     margin-bottom: 12px; }
-  .family .list .list__header {
+  .list .list__header {
     margin: 12px 0 8px 20px; }
-  .family .list a.list__item {
+  .list a.list__item {
     position: relative;
     display: block;
     font-size: 14px;
     height: 16px;
     line-height: 16px;
-    padding: 8px 8px 8px 46px;
+    padding: 8px 8px 8px 54px;
     color: #212121;
     text-decoration: none; }
-    .family .list a.list__item:hover {
+    .list a.list__item:hover {
       background: #eee; }
-    .family .list a.list__item.active {
+    .list a.list__item.active {
       background: #e0e0e0;
       font-weight: 500; }
-    .family .list a.list__item .list__item-icon {
+      .list a.list__item.active.active--blue {
+        border-right: 3px solid #2196f3; }
+      .list a.list__item.active.active--amber {
+        border-right: 3px solid #ffc107; }
+    .list a.list__item .list__item__icon {
       position: absolute;
-      left: 18px;
+      left: 24px;
       top: calc(50% - 10px);
       height: 20px; }
 

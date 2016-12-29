@@ -20,9 +20,10 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      marked: null,
+      marked: undefined,
       family: family,
-      isLoggedIn: false
+      isLoggedIn: false,
+      google: undefined
     };
     this.getFamily('5804c0fc795236fdc199b614');
     this.getFamilyMembers('5804c0fc795236fdc199b614');
@@ -70,6 +71,7 @@ export default class App extends Component {
             setMarked={this.setMarked.bind(this)}
             marked={this.state.marked}
             requestOne={this.requestOne.bind(this)}
+            logout={this.logout.bind(this)}
             isLoggedIn={this.state.isLoggedIn}></Drawer> : null
         }
         {
@@ -79,19 +81,28 @@ export default class App extends Component {
             setMarked={this.setMarked.bind(this)}
             marked={this.state.marked}
             requestOne={this.requestOne.bind(this)}
-            isLoggedIn={this.state.isLoggedIn}></GoogleMap> : null
+            isLoggedIn={this.state.isLoggedIn}
+            google={this.state.google}
+            setGoogle={this.setGoogle.bind(this)}></GoogleMap> : null
         }
       </div>
     );
   }
 
   login() {
-    console.log('login!!');
     this.setState({isLoggedIn: true});
+  }
+
+  logout() {
+    this.setState({isLoggedIn: false});
   }
 
   setMarked(marked) {
     this.setState({marked: marked});
+  }
+
+  setGoogle(google) {
+    this.setState({google: google});
   }
 
   requestOne(src, dest) {
