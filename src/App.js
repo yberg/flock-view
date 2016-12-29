@@ -23,7 +23,8 @@ export default class App extends Component {
       marked: undefined,
       family: family,
       isLoggedIn: false,
-      google: undefined
+      google: undefined,
+      gapi: undefined
     };
     this.getFamily('5804c0fc795236fdc199b614');
     this.getFamilyMembers('5804c0fc795236fdc199b614');
@@ -62,7 +63,9 @@ export default class App extends Component {
           !this.state.isLoggedIn ?
           <Login
             login={this.login.bind(this)}
-            isLoggedIn={this.state.isLoggedIn}></Login> : null
+            isLoggedIn={this.state.isLoggedIn}
+            gapi={this.state.gapi}
+            setGapi={this.setGapi.bind(this)}></Login> : null
         }
         {
           this.state.isLoggedIn ?
@@ -94,7 +97,13 @@ export default class App extends Component {
   }
 
   logout() {
+    if (this.state.gapi) {
+      this.state.gapi.auth2.getAuthInstance().signOut().then(() => {
+        console.log('User signed out from Google.');
+      });
+    }
     this.setState({isLoggedIn: false});
+    this.forceUpdate();
   }
 
   setMarked(marked) {
@@ -103,6 +112,10 @@ export default class App extends Component {
 
   setGoogle(google) {
     this.setState({google: google});
+  }
+
+  setGapi(gapi) {
+    this.setState({gapi: gapi});
   }
 
   requestOne(src, dest) {

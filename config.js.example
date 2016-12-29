@@ -1,0 +1,6 @@
+var config = {};
+
+config.apiKey = '<GOOGLE_MAPS_API_KEY>';
+config.clientId = '<GOOGLE_SIGN_IN_CLIENT_ID>';
+
+module.exports = config;

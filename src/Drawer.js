@@ -64,7 +64,7 @@ export default class Sidebar extends Component {
           </div>
           <div className='drawer__segment'>
             <div className='input-group'>
-              <button className='button--red center'
+              <button className='button button--red center'
               onClick={this.props.logout}>
                 <img src={exit} role='presentation' />
                 Sign out

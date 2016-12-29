@@ -111,6 +111,6 @@ function loadJS(src) {
   script.src = src;
   script.async = true;
   script.defer = true;
-  var ref = window.document.getElementsByTagName('script')[0];
+  let ref = window.document.getElementsByTagName('script')[0];
   ref.parentNode.insertBefore(script, ref);
 }

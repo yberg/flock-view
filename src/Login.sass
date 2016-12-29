@@ -10,7 +10,7 @@
   .card
     @include box-shadow
     align-self: center
-    width: 460px
+    width: 400px
     border-radius: 2px
     overflow: hidden
     background: $white
@@ -24,13 +24,13 @@
       margin: 20px
 
     .card__footer
-      display: flex
       padding: 10px 20px
       background: $gray100
       border-top: 1px solid $border-color
 
 form
   display: block
+  margin: 20px 0
 
 input
   display: table-cell
@@ -45,19 +45,19 @@ input
   padding: 0 8px
   margin: 0
   background: $gray100
-  font-size: 15px
+  font-size: 14px
 
   &.input--large
     height: 48px
     padding: 0 12px
-    font-size: 18px
+    font-size: 16px
 
   &:focus,
   &:not(:placeholder-shown)
     @include input-shadow
     background: $white
 
-button
+.button
   @include transition
   position: relative
   display: table-cell
@@ -68,7 +68,7 @@ button
   border: 1px solid $border-color
   color: $black
   outline: none
-  font-size: 15px
+  font-size: 14px
   vertical-align: middle
   cursor: pointer
 
@@ -126,6 +126,9 @@ button
     &:active
       background: linear-gradient($red600, $red500)
 
+  & + .button
+    margin-left: 8px
+
   & > img
     display: inline-block
     vertical-align: middle
@@ -156,7 +159,6 @@ button
     padding-left: 12px
     padding-right: 8px
     z-index: 2
-    font-size: 18px
     font-weight: bold
     color: $gray700
 
@@ -165,7 +167,11 @@ button
       border-top: 1px solid $border-color
       border-bottom: 1px solid $border-color
 
-    img
+    & > span
+      font-size: 20px
+      padding: 0 2px
+
+    & > img
       height: 20px
       vertical-align: middle
 
@@ -185,6 +191,9 @@ button
         width: calc(100% - 1px)
         padding-left: 7px
 
+        &:not(:placeholder-shown)
+          width: 100%
+
         &.input--large
           padding-left: 11px
 
@@ -197,7 +206,7 @@ button
           &.input--large
             padding-left: 11px
 
-  button
+  .button
     &:first-child
       padding-left: 20px
 
@@ -218,3 +227,6 @@ button
 .center
   display: table
   margin: 0 auto
+
+.g-signin2
+  all: unset
