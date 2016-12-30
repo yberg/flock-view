@@ -9,12 +9,12 @@ export default class GoogleMap extends Component {
   constructor(props) {
     super(props);
     self = this;
-    this.state = {
-      family: this.props.family
-    };
   }
 
   componentDidMount() {
+    if (this.props.user.familyId) {
+      this.props.loadFamily(this.props.user.familyId, this.addMarkers);
+    }
     self.mapRef = this.refs.map;
     if (this.props.google) {
       self.google = this.props.google;
@@ -32,53 +32,59 @@ export default class GoogleMap extends Component {
   initMap() {
     if (!self.google) {
       self.google = this.google;
-      self.props.setGoogle(this.google);
+      self.props.updateState({google: this.google});
     }
     const home = {lat: 59.5068518, lng: 17.7573347};
     self.map = new self.google.maps.Map(self.mapRef, {
       zoom: 14,
       center: home
     });
-    self.addMarkers();
   }
 
   addMarkers() {
+    let family = self.props.family;
+
     // Add family member markers
-    this.props.family.members.forEach((member) => {
-      let defaultMarkerIcon =  markerIconUrl + 'red' + member.name.charAt(0).toUpperCase() + '.png';
-      let marker = new self.google.maps.Marker({
-        position: {lat: member.lat, lng: member.long},
-        map: self.map,
-        title: member._id,
-        icon: defaultMarkerIcon
-      });
-      marker.addListener('click', onMarkerClick.bind(marker));
-      member.marker = marker;
-      member.defaultMarkerIcon = defaultMarkerIcon;
+    family.members.forEach((member) => {
+      if (member.lat && member.long) {
+        let defaultMarkerIcon =  markerIconUrl + 'red' + member.name.charAt(0).toUpperCase() + '.png';
+        let marker = new self.google.maps.Marker({
+          position: {lat: member.lat, lng: member.long},
+          map: self.map,
+          title: member._id,
+          icon: defaultMarkerIcon
+        });
+        marker.addListener('click', onMarkerClick.bind(marker));
+        member.marker = marker;
+        member.defaultMarkerIcon = defaultMarkerIcon;
+      }
     });
 
     // Add family favorites markers
-    this.props.family.favorites.forEach((favorite) => {
-      let defaultMarkerIcon = markerIconUrl + 'orange' + favorite.name.charAt(0).toUpperCase() + '.png';
-      let marker = new self.google.maps.Marker({
-        position: {lat: favorite.lat, lng: favorite.long},
-        map: self.map,
-        title: favorite._id,
-        icon: defaultMarkerIcon
-      });
-      marker.addListener('click', onMarkerClick.bind(marker));
-      favorite.marker = marker;
-      favorite.defaultMarkerIcon = defaultMarkerIcon;
+    family.favorites.forEach((favorite) => {
+      if (favorite.lat && favorite.long) {
+        let defaultMarkerIcon = markerIconUrl + 'orange' + favorite.name.charAt(0).toUpperCase() + '.png';
+        let marker = new self.google.maps.Marker({
+          position: {lat: favorite.lat, lng: favorite.long},
+          map: self.map,
+          title: favorite._id,
+          icon: defaultMarkerIcon
+        });
+        marker.addListener('click', onMarkerClick.bind(marker));
+        favorite.marker = marker;
+        favorite.defaultMarkerIcon = defaultMarkerIcon;
+      }
     });
 
     // Update state
-    this.setState({
-      family: this.props.family
+    self.props.updateState({
+      family: family
     });
+    self.setState({});
   }
 
   componentDidUpdate() {
-    this.state.family.favorites.concat(self.state.family.members)
+    this.props.family.favorites.concat(this.props.family.members)
     .forEach((item) => {
       if (item.marker) {
         item.marker.setPosition({lat: item.lat, lng: item.long});

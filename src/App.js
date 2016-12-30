@@ -27,8 +27,6 @@ export default class App extends Component {
       gapi: undefined,
       user: undefined
     };
-    this.getFamily('5804c0fc795236fdc199b614');
-    this.getFamilyMembers('5804c0fc795236fdc199b614');
   }
 
   componentDidMount() {
@@ -64,15 +62,15 @@ export default class App extends Component {
           !this.state.isLoggedIn ?
           <Login
             user={this.state.user}
-            setUser={this.setUser.bind(this)}
             login={this.login.bind(this)}
             isLoggedIn={this.state.isLoggedIn}
             gapi={this.state.gapi}
-            setGapi={this.setGapi.bind(this)}></Login> : null
+            updateState={this.updateState.bind(this)}></Login> : null
         }
         {
           this.state.isLoggedIn ?
           <Drawer
+            user={this.state.user}
             family={this.state.family}
             setMarked={this.setMarked.bind(this)}
             marked={this.state.marked}
@@ -83,26 +81,25 @@ export default class App extends Component {
         {
           this.state.isLoggedIn ?
           <GoogleMap
+            user={this.state.user}
             family={this.state.family}
+            loadFamily={this.loadFamily.bind(this)}
             setMarked={this.setMarked.bind(this)}
             marked={this.state.marked}
+            updateState={this.updateState.bind(this)}
             requestOne={this.requestOne.bind(this)}
             isLoggedIn={this.state.isLoggedIn}
-            google={this.state.google}
-            setGoogle={this.setGoogle.bind(this)}></GoogleMap> : null
+            google={this.state.google}></GoogleMap> : null
         }
       </div>
     );
   }
 
-  setUser(user) {
+  login(user) {
     this.setState({
+      isLoggedIn: true,
       user: user
     });
-  }
-
-  login() {
-    this.setState({isLoggedIn: true});
   }
 
   logout() {
@@ -111,20 +108,18 @@ export default class App extends Component {
         console.log('User signed out from Google.');
       });
     }
-    this.setState({isLoggedIn: false});
-    this.forceUpdate();
+    this.setState({
+      isLoggedIn: false,
+      user: undefined
+    });
   }
 
   setMarked(marked) {
     this.setState({marked: marked});
   }
 
-  setGoogle(google) {
-    this.setState({google: google});
-  }
-
-  setGapi(gapi) {
-    this.setState({gapi: gapi});
+  updateState(obj) {
+     this.setState(obj);
   }
 
   requestOne(src, dest) {
@@ -152,7 +147,7 @@ export default class App extends Component {
     });
   }
 
-  getFamily(familyId) {
+  loadFamily(familyId, callback) {
     jsonp('http://localhost:3001/family/' + familyId, null, (err, data) => {
       if (err) {
         console.log('error: ' + err.message);
@@ -165,6 +160,27 @@ export default class App extends Component {
           this.setState({
             family: _family
           });
+          if (callback) {
+            callback();
+          }
+        }
+      }
+      console.log('this.state.family:');
+      console.log(this.state.family);
+    });
+    jsonp('http://localhost:3001/user?familyId=' + familyId, null, (err, data) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        if (data.success) {
+          var _family = this.state.family;
+          _family.members = data.users;
+          this.setState({
+            family: _family
+          });
+          if (callback) {
+            callback();
+          }
         }
       }
       console.log('this.state.family:');

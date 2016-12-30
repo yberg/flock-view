@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import request from 'request';
 import './Login.css';
+import email from './img/email_gray.svg';
 import account from './img/account_gray.svg';
 import lock from './img/lock_gray.svg';
 import done from './img/done_white.svg';
@@ -16,8 +17,6 @@ export default class Login extends Component {
   }
 
   componentDidMount() {
-    //loadMeta('google-signin-scope', 'profile email');
-    //loadMeta('google-signin-client_id', CLIENT_ID + '.apps.googleusercontent.com');
     window.onSuccess = onSuccess;
     window.onFailure = onFailure;
     window.start = this.start;
@@ -26,11 +25,11 @@ export default class Login extends Component {
 
   start() {
     console.log(this);
-    self.props.setGapi(this.gapi);
+    self.props.updateState({gapi: this.gapi});
     let gapi = this.gapi;
     gapi.load('auth2', () => {
       gapi.auth2.init({
-        client_id: CLIENT_ID + '.apps.googleusercontent.com',
+        client_id: CLIENT_ID,
       });
     });
     gapi.signin2.render('my-signin2', {
@@ -44,44 +43,6 @@ export default class Login extends Component {
     });
   }
 
-  signInWithGoogle() {
-    let auth = self.props.gapi.auth2.getAuthInstance();
-    //
-    // console.log(user.getBasicProfile());
-    // console.log(user.getBasicProfile().getGivenName());
-    // console.log(user.getBasicProfile().getFamilyName());
-    // let userDetails = user.getBasicProfile();
-    // this.props.setUser({
-    //   gmail: userDetails.getEmail(),
-    //   name: userDetails.getName(),
-    //   firstName: userDetails.getGivenName(),
-    //   lastName: userDetails.getFamilyName()
-    // });
-    // auth.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(res => {
-    //   console.log(res);
-    //   let user = auth.currentUser.get();
-    //   let userDetails = user.getBasicProfile();
-    //   request.post('http://localhost:3001/auth', {
-    //     form: {
-    //       gmail: userDetails.getEmail(),
-    //       idToken: res.code
-    //     }
-    //   }, (err, httpResponse, body) => {
-    //     if (err) {
-    //       console.log('error: ' + err.message);
-    //     } else {
-    //       console.log(body);
-    //       self.props.setUser({
-    //         gmail: userDetails.getEmail(),
-    //         name: userDetails.getName(),
-    //         firstName: userDetails.getGivenName(),
-    //         lastName: userDetails.getFamilyName()
-    //       });
-    //     }
-    //   });
-    // });
-  }
-
   render() {
     return (
       <div className='login'>
@@ -93,7 +54,7 @@ export default class Login extends Component {
             <form>
               <div className='input-group'>
                 <span className='input-label'>
-                  <span>@</span>
+                  <img src={email} role='presentation' />
                 </span>
                 <input type='email' className=''
                 placeholder='Email' required />
@@ -114,15 +75,6 @@ export default class Login extends Component {
                 <span style={{marginLeft: '10px', color: '#333'}}>or...</span>
                 <p></p>
                 <div id='my-signin2'></div>
-                {/* <button className='google-sign-in'
-                onClick={this.signInWithGoogle.bind(this)}>
-                  <div>
-                    <div>
-                      <img src={google} role='presentation' />
-                    </div>
-                  </div>
-                  <span>Sign in with Google</span>
-                </button> */}
               </div>
             </form>
           </div>
@@ -131,7 +83,7 @@ export default class Login extends Component {
             <form>
               <div className='input-group'>
                 <span className='input-label'>
-                  <span>@</span>
+                  <img src={email} role='presentation' />
                 </span>
                 <input type='email' className=''
                 placeholder='Email' required />
@@ -141,7 +93,14 @@ export default class Login extends Component {
                   <img src={account} role='presentation' />
                 </span>
                 <input type='text' className=''
-                placeholder='Name' required />
+                placeholder='First name' required />
+              </div>
+              <div className='input-group'>
+                <span className='input-label'>
+                  <img src={account} role='presentation' />
+                </span>
+                <input type='text' className=''
+                placeholder='Last name' required />
               </div>
               <div className='input-group'>
                 <span className='input-label'>
@@ -184,19 +143,6 @@ function loadJS(src) {
   ref.parentNode.insertBefore(script, ref);
 }
 
-function loadMeta(name, content) {
-  for (let m of window.document.getElementsByTagName('meta')) {
-    if (m.name === name) {
-      m.remove();
-    }
-  }
-  let meta = window.document.createElement('meta');
-  meta.name = name;
-  meta.content = content;
-  let ref = window.document.getElementsByTagName('meta')[0];
-  ref.parentNode.insertBefore(meta, ref);
-}
-
 function onSuccess(googleUser) {
   let userDetails = googleUser.getBasicProfile();
   request.post('http://localhost:3001/auth', {
@@ -208,14 +154,17 @@ function onSuccess(googleUser) {
     if (err) {
       console.log('error: ' + err.message);
     } else {
+      body = JSON.parse(body);
+      console.log('Signed in: ');
       console.log(body);
-      self.props.setUser({
-        gmail: userDetails.getEmail(),
-        name: userDetails.getName(),
-        firstName: userDetails.getGivenName(),
-        lastName: userDetails.getFamilyName()
-      });
-      self.props.login();
+      let user = {
+        gmail: body.gmail,
+        name: body.name,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        familyId: body.familyId
+      }
+      self.props.login(user);
     }
   });
   console.log('Logged in as: ' + googleUser.getBasicProfile().getName()
