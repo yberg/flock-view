@@ -33,15 +33,15 @@ export default class Login extends Component {
         client_id: CLIENT_ID + '.apps.googleusercontent.com',
       });
     });
-    // gapi.signin2.render('my-signin2', {
-    //   'scope': 'profile email',
-    //   'width': 180,
-    //   'height': 36,
-    //   'longtitle': true,
-    //   'theme': 'dark',
-    //   'onsuccess': onSuccess,
-    //   'onfailure': onFailure
-    // });
+    gapi.signin2.render('my-signin2', {
+      'scope': 'profile email',
+      'width': 180,
+      'height': 36,
+      'longtitle': true,
+      'theme': 'dark',
+      'onsuccess': onSuccess,
+      'onfailure': onFailure
+    });
   }
 
   signInWithGoogle() {
@@ -57,29 +57,29 @@ export default class Login extends Component {
     //   firstName: userDetails.getGivenName(),
     //   lastName: userDetails.getFamilyName()
     // });
-    auth.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(res => {
-      console.log(res);
-      let user = auth.currentUser.get();
-      let userDetails = user.getBasicProfile();
-      request.post('http://localhost:3001/auth', {
-        form: {
-          gmail: userDetails.getEmail(),
-          idToken: res.code
-        }
-      }, (err, httpResponse, body) => {
-        if (err) {
-          console.log('error: ' + err.message);
-        } else {
-          console.log(body);
-          self.props.setUser({
-            gmail: userDetails.getEmail(),
-            name: userDetails.getName(),
-            firstName: userDetails.getGivenName(),
-            lastName: userDetails.getFamilyName()
-          });
-        }
-      });
-    });
+    // auth.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(res => {
+    //   console.log(res);
+    //   let user = auth.currentUser.get();
+    //   let userDetails = user.getBasicProfile();
+    //   request.post('http://localhost:3001/auth', {
+    //     form: {
+    //       gmail: userDetails.getEmail(),
+    //       idToken: res.code
+    //     }
+    //   }, (err, httpResponse, body) => {
+    //     if (err) {
+    //       console.log('error: ' + err.message);
+    //     } else {
+    //       console.log(body);
+    //       self.props.setUser({
+    //         gmail: userDetails.getEmail(),
+    //         name: userDetails.getName(),
+    //         firstName: userDetails.getGivenName(),
+    //         lastName: userDetails.getFamilyName()
+    //       });
+    //     }
+    //   });
+    // });
   }
 
   render() {
@@ -113,8 +113,8 @@ export default class Login extends Component {
                 </button>
                 <span style={{marginLeft: '10px', color: '#333'}}>or...</span>
                 <p></p>
-                {/*<div id='my-signin2'></div>*/}
-                <button className='google-sign-in'
+                <div id='my-signin2'></div>
+                {/* <button className='google-sign-in'
                 onClick={this.signInWithGoogle.bind(this)}>
                   <div>
                     <div>
@@ -122,7 +122,7 @@ export default class Login extends Component {
                     </div>
                   </div>
                   <span>Sign in with Google</span>
-                </button>
+                </button> */}
               </div>
             </form>
           </div>
@@ -198,8 +198,26 @@ function loadMeta(name, content) {
 }
 
 function onSuccess(googleUser) {
-  self.props.login();
-  console.log(googleUser);
+  let userDetails = googleUser.getBasicProfile();
+  request.post('http://localhost:3001/auth', {
+    form: {
+      gmail: userDetails.getEmail(),
+      idToken: googleUser.getAuthResponse().id_token
+    }
+  }, (err, httpResponse, body) => {
+    if (err) {
+      console.log('error: ' + err.message);
+    } else {
+      console.log(body);
+      self.props.setUser({
+        gmail: userDetails.getEmail(),
+        name: userDetails.getName(),
+        firstName: userDetails.getGivenName(),
+        lastName: userDetails.getFamilyName()
+      });
+      self.props.login();
+    }
+  });
   console.log('Logged in as: ' + googleUser.getBasicProfile().getName()
     + ' (' + googleUser.getBasicProfile().getEmail() + ')');
 }
