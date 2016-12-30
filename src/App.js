@@ -24,7 +24,8 @@ export default class App extends Component {
       family: family,
       isLoggedIn: false,
       google: undefined,
-      gapi: undefined
+      gapi: undefined,
+      user: undefined
     };
     this.getFamily('5804c0fc795236fdc199b614');
     this.getFamilyMembers('5804c0fc795236fdc199b614');
@@ -62,6 +63,8 @@ export default class App extends Component {
         {
           !this.state.isLoggedIn ?
           <Login
+            user={this.state.user}
+            setUser={this.setUser.bind(this)}
             login={this.login.bind(this)}
             isLoggedIn={this.state.isLoggedIn}
             gapi={this.state.gapi}
@@ -90,6 +93,12 @@ export default class App extends Component {
         }
       </div>
     );
+  }
+
+  setUser(user) {
+    this.setState({
+      user: user
+    });
   }
 
   login() {
