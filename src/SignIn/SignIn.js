@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import request from 'request';
-import './Login.css';
-import email from './img/email_gray.svg';
-import account from './img/account_gray.svg';
-import lock from './img/lock_gray.svg';
-import done from './img/done_white.svg';
-import google from './img/google.svg';
-const CLIENT_ID = require('../config').clientId;
+import './SignIn.css';
+import email from '../img/email_gray.svg';
+import account from '../img/account_gray.svg';
+import lock from '../img/lock_gray.svg';
+import done from '../img/done_white.svg';
+const CLIENT_ID = require('../../config').clientId;
 
 var self;
 
-export default class Login extends Component {
+export default class SignIn extends Component {
   constructor(props) {
     super(props);
     self = this;
@@ -43,32 +42,59 @@ export default class Login extends Component {
     });
   }
 
+  signInWithEmail(e) {
+    e.preventDefault();
+    request.post('http://localhost:3001/auth', {
+      form: {
+        email: e.target.email.value,
+        password: e.target.password.value
+      }
+    }, (err, httpResponse, body) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        body = JSON.parse(body);
+        if (body.success) {
+          console.log('Signed in: ');
+          console.log(body);
+          let user = {
+            email: body.email,
+            name: body.name,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            familyId: body.familyId
+          }
+          self.props.signIn(user);
+        } else {
+          console.log(body);
+        }
+      }
+    });
+  }
+
   render() {
     return (
-      <div className='login'>
+      <div className='sign-in'>
         <div className='card'>
           <div className='card__header'>
             <h4>Sign in</h4>
           </div>
           <div className='card__body'>
-            <form>
+            <form onSubmit={this.signInWithEmail.bind(this)}>
               <div className='input-group'>
                 <span className='input-label'>
                   <img src={email} role='presentation' />
                 </span>
-                <input type='email' className=''
-                placeholder='Email' required />
+                <input type='email' name='email' placeholder='Email' required />
               </div>
               <div className='input-group'>
                 <span className='input-label'>
                   <img src={lock} role='presentation' />
                 </span>
-                <input type='password' className=''
-                placeholder='Password' required />
+                <input type='password' name='password' placeholder='Password' />
               </div>
               <div>
-                <button className='button button--blue'
-                onClick={this.props.login}>
+                <button className='button button--blue'>
                   <img src={done} role='presentation' />
                   Sign in
                 </button>
@@ -164,7 +190,7 @@ function onSuccess(googleUser) {
         lastName: body.lastName,
         familyId: body.familyId
       }
-      self.props.login(user);
+      self.props.signIn(user);
     }
   });
   console.log('Logged in as: ' + googleUser.getBasicProfile().getName()

@@ -3,30 +3,33 @@ import jsonp from 'jsonp';
 import io from 'socket.io-client';
 import './App.css';
 
-import Login from './Login';
-import Drawer from './Drawer';
-import GoogleMap from './GoogleMap';
+import SignIn from './SignIn/SignIn';
+import Navbar from './Navbar/Navbar';
+import Drawer from './Drawer/Drawer';
+import GoogleMap from './GoogleMap/GoogleMap';
 
 let socket = io('http://localhost:3001', {query: '_id=5804aa86795236fdc199b606'});
 
-let family = {
+let initialFamily = {
   id: null,
   name: null,
   favorites: [],
   members: []
 };
 
+let initialState = {
+  marked: undefined,
+  family: initialFamily,
+  isLoggedIn: false,
+  google: undefined,
+  gapi: undefined,
+  user: undefined
+};
+
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      marked: undefined,
-      family: family,
-      isLoggedIn: false,
-      google: undefined,
-      gapi: undefined,
-      user: undefined
-    };
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -36,7 +39,6 @@ export default class App extends Component {
       // Update self
       /*socket.emit('updateSelf', {
         _id: 'test_id',
-
       });*/
     }).on('updatedOne', (data) => {
       // Updated requested user
@@ -60,58 +62,59 @@ export default class App extends Component {
       <div className='App'>
         {
           !this.state.isLoggedIn ?
-          <Login
+          <SignIn
             user={this.state.user}
-            login={this.login.bind(this)}
+            signIn={this.signIn.bind(this)}
             isLoggedIn={this.state.isLoggedIn}
             gapi={this.state.gapi}
-            updateState={this.updateState.bind(this)}></Login> : null
+            updateState={this.updateState.bind(this)}></SignIn> : null
         }
         {
           this.state.isLoggedIn ?
-          <Drawer
-            user={this.state.user}
-            family={this.state.family}
-            setMarked={this.setMarked.bind(this)}
-            marked={this.state.marked}
-            requestOne={this.requestOne.bind(this)}
-            logout={this.logout.bind(this)}
-            isLoggedIn={this.state.isLoggedIn}></Drawer> : null
-        }
-        {
-          this.state.isLoggedIn ?
-          <GoogleMap
-            user={this.state.user}
-            family={this.state.family}
-            loadFamily={this.loadFamily.bind(this)}
-            setMarked={this.setMarked.bind(this)}
-            marked={this.state.marked}
-            updateState={this.updateState.bind(this)}
-            requestOne={this.requestOne.bind(this)}
-            isLoggedIn={this.state.isLoggedIn}
-            google={this.state.google}></GoogleMap> : null
+          <div className='flex-container--column'>
+            <Navbar
+              user={this.state.user}
+              family={this.state.family}></Navbar>
+            <div className='flex-container--row'>
+              <Drawer
+                user={this.state.user}
+                family={this.state.family}
+                setMarked={this.setMarked.bind(this)}
+                marked={this.state.marked}
+                requestOne={this.requestOne.bind(this)}
+                signOut={this.signOut.bind(this)}
+                isLoggedIn={this.state.isLoggedIn}></Drawer>
+              <GoogleMap
+                user={this.state.user}
+                family={this.state.family}
+                loadFamily={this.loadFamily.bind(this)}
+                setMarked={this.setMarked.bind(this)}
+                marked={this.state.marked}
+                updateState={this.updateState.bind(this)}
+                requestOne={this.requestOne.bind(this)}
+                isLoggedIn={this.state.isLoggedIn}
+                google={this.state.google}></GoogleMap>
+            </div>
+          </div> : null
         }
       </div>
     );
   }
 
-  login(user) {
+  signIn(user) {
     this.setState({
       isLoggedIn: true,
       user: user
     });
   }
 
-  logout() {
+  signOut() {
     if (this.state.gapi) {
       this.state.gapi.auth2.getAuthInstance().signOut().then(() => {
         console.log('User signed out from Google.');
       });
     }
-    this.setState({
-      isLoggedIn: false,
-      user: undefined
-    });
+    this.setState(initialState);
   }
 
   setMarked(marked) {

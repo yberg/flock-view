@@ -1,11 +1,11 @@
-@import variables
-@import mixins
+@import ../variables
+@import ../mixins
 
-.login
+.sign-in
   width: 100%
   display: flex
   justify-content: center
-  background: url(./img/bg.jpg)
+  background: url(../img/bg.jpg)
 
   .card
     @include box-shadow
@@ -13,11 +13,11 @@
     width: 400px
     border-radius: 2px
     overflow: hidden
-    background: $white
+    background: $ui-color--base
 
     .card__header
       padding: 10px 20px
-      background: $gray100
+      background: $ui-color--accent
       border-bottom: 1px solid $border-color
 
     .card__body
@@ -25,7 +25,7 @@
 
     .card__footer
       padding: 10px 20px
-      background: $gray100
+      background: $ui-color--accent
       border-top: 1px solid $border-color
 
 form

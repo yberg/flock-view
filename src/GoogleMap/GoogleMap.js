@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './GoogleMap.css';
-const API_KEY = require('../config').apiKey;
+const API_KEY = require('../../config').apiKey;
 
 var self;
 let markerIconUrl = 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_';

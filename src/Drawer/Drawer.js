@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import './Drawer.css';
-import account from './img/account_blue.svg';
-import star from './img/star_amber.svg';
-import settings from './img/settings_gray.svg';
-import exit from './img/exit_white.svg';
+import account from '../img/account_blue.svg';
+import star from '../img/star_amber.svg';
+import settings from '../img/settings_gray.svg';
+import exit from '../img/exit_white.svg';
 
-export default class Sidebar extends Component {
+export default class Drawer extends Component {
   render() {
     let props = this.props;
     return (
       <div className='drawer'>
         <div>
           <div className='list'>
-            <div className='list__title'>
-              <h4>{props.family.name}</h4>
+            <div className='list__header'>
+              <h5>Members</h5>
             </div>
             {
               props.family.members &&
@@ -65,7 +65,7 @@ export default class Sidebar extends Component {
           <div className='drawer__segment'>
             <div className='input-group'>
               <button className='button button--red center'
-              onClick={this.props.logout}>
+              onClick={this.props.signOut}>
                 <img src={exit} role='presentation' />
                 Sign out
               </button>

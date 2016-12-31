@@ -1,5 +1,5 @@
 .google-map {
-  width: 100%;
+  flex: 1;
   background-color: #a3ccff; }
   .google-map .map {
     width: 100%;
