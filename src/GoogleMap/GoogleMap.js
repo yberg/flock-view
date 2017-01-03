@@ -12,9 +12,6 @@ export default class GoogleMap extends Component {
   }
 
   componentDidMount() {
-    if (this.props.user.familyId) {
-      this.props.loadFamily(this.props.user.familyId, this.addMarkers);
-    }
     self.mapRef = this.refs.map;
     if (this.props.google) {
       self.google = this.props.google;
@@ -39,6 +36,11 @@ export default class GoogleMap extends Component {
       zoom: 14,
       center: home
     });
+
+    // Load family
+    if (self.props.user.familyId) {
+      self.props.loadFamily(self.props.user.familyId, self.addMarkers);
+    }
   }
 
   addMarkers() {

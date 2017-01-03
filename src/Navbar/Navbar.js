@@ -17,7 +17,7 @@ export default class Navbar extends Component {
       <div className='navbar'>
         <div className='navbar__title'>
           <span>
-            <img src={people} />
+            <img src={people} role='presentation' />
             {this.props.family.name}
           </span>
         </div>
@@ -27,14 +27,14 @@ export default class Navbar extends Component {
               {
                 this.props.user.gmail ?
                 <span>
-                  <img src={google} />
+                  <img src={google} role='presentation' />
                   {this.props.user.name}
                 </span> : null
               }
               {
                 this.props.user.email ?
                 <span>
-                  <img src={account} />
+                  <img src={account} role='presentation' />
                   {this.props.user.name}
                 </span> : null
               }

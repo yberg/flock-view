@@ -4,6 +4,8 @@ import account from '../img/account_blue.svg';
 import star from '../img/star_amber.svg';
 import settings from '../img/settings_gray.svg';
 import exit from '../img/exit_white.svg';
+import email from '../img/email_gray.svg';
+import google from '../img/google.svg';
 
 export default class Drawer extends Component {
   render() {
@@ -72,7 +74,7 @@ export default class Drawer extends Component {
             </div>
           </div>
         </div>
-        <div className='details'>
+        <div className='drawer__segment details'>
           {
             this.props.family.members &&
             this.props.family.members.map(function(member, i) {
@@ -80,7 +82,13 @@ export default class Drawer extends Component {
                 return (
                   <div key={i}>
                     <h5>{member.name}</h5>
-                    <span>{member.email || member.gmail}</span>
+                    <span>
+                      {member.email ?
+                        <img src={email} role='presentation' /> :
+                        <img src={google} role='presentation' />
+                      }
+                      {member.email || member.gmail}
+                    </span>
                   </div>
                 );
               } else {
