@@ -8,12 +8,18 @@ import email from '../img/email_gray.svg';
 import google from '../img/google.svg';
 
 export default class Drawer extends Component {
+  openSettings() {
+    this.props.updateState({
+      settings: true
+    });
+  }
+
   render() {
-    let props = this.props;
+    const props = this.props;
     return (
       <div className='drawer'>
         <div>
-          <div className='list'>
+          <div className='list list--divider'>
             <div className='list__header'>
               <h5>Members</h5>
             </div>
@@ -26,12 +32,12 @@ export default class Drawer extends Component {
                   className={'list__item' + (props.marked === member._id ? ' active active--blue' : '')}
                   onClick={() => {
                     props.setMarked(member._id);
-                    props.requestOne('5804aa86795236fdc199b606', member._id);
+                    props.requestOne(props.user._id, member._id);
                   }}>
-                    <img src={account}
+                    <img src={member.imageUrl ? member.imageUrl : account}
                     className='list__item__icon'
                     role='presentation' />
-                    {member.name}
+                    <span>{member.name}</span>
                   </a>
                 );
               })
@@ -50,28 +56,26 @@ export default class Drawer extends Component {
                     <img src={star}
                     className='list__item__icon'
                     role='presentation' />
-                    {favorite.name}
+                    <span>{favorite.name}</span>
                   </a>
                 );
               })
             }
           </div>
-          <div className='list'>
-            <a href='#Settings' className='list__item'>
+          <div className='list list--divider'>
+            <a onClick={this.openSettings.bind(this)} href='#Settings' className='list__item'>
               <img src={settings}
               className='list__item__icon'
               role='presentation' />
-              Settings
+              <span>Settings</span>
             </a>
           </div>
           <div className='drawer__segment'>
-            <div className='input-group'>
-              <button className='button button--red center'
-              onClick={this.props.signOut}>
-                <img src={exit} role='presentation' />
-                Sign out
-              </button>
-            </div>
+            <button className='button button--red center'
+            onClick={this.props.signOut}>
+              <img src={exit} role='presentation' />
+              Sign out
+            </button>
           </div>
         </div>
         <div className='drawer__segment details'>
@@ -81,13 +85,12 @@ export default class Drawer extends Component {
               if (member._id === props.marked) {
                 return (
                   <div key={i}>
-                    <h5>{member.name}</h5>
                     <span>
-                      {member.email ?
-                        <img src={email} role='presentation' /> :
-                        <img src={google} role='presentation' />
+                      <img src={member.email ? email : google} role='presentation' />
+                      {member.imageUrl ?
+                        <img src={member.imageUrl} role='presentation' /> : null
                       }
-                      {member.email || member.gmail}
+                      <h5 style={{display: 'inline-block'}}>{member.name}</h5>
                     </span>
                   </div>
                 );

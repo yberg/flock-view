@@ -44,7 +44,8 @@ export default class GoogleMap extends Component {
   }
 
   addMarkers() {
-    let family = self.props.family;
+    const user = self.props.user;
+    const family = self.props.family;
 
     // Add family member markers
     family.members.forEach((member) => {
@@ -56,7 +57,7 @@ export default class GoogleMap extends Component {
           title: member._id,
           icon: defaultMarkerIcon
         });
-        marker.addListener('click', onMarkerClick.bind(marker));
+        marker.addListener('click', onMarkerClick.bind(marker, user._id));
         member.marker = marker;
         member.defaultMarkerIcon = defaultMarkerIcon;
       }
@@ -72,7 +73,7 @@ export default class GoogleMap extends Component {
           title: favorite._id,
           icon: defaultMarkerIcon
         });
-        marker.addListener('click', onMarkerClick.bind(marker));
+        marker.addListener('click', onMarkerClick.bind(marker, user._id));
         favorite.marker = marker;
         favorite.defaultMarkerIcon = defaultMarkerIcon;
       }
@@ -107,11 +108,11 @@ export default class GoogleMap extends Component {
   }
 }
 
-function onMarkerClick() {
-  let id = this.getTitle();
-  console.log('clicked marker: ' + id);
-  self.props.setMarked(id);
-  self.props.requestOne('5804aa86795236fdc199b606', id);
+function onMarkerClick(src) {
+  const dest = this.getTitle();
+  console.log('clicked marker: ' + dest);
+  self.props.setMarked(dest);
+  self.props.requestOne(src, dest);
 }
 
 function loadJS(src) {

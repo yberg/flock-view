@@ -11,7 +11,7 @@
   .navbar .navbar__title {
     width: 220px;
     padding-left: 20px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     line-height: 60px; }
     .navbar .navbar__title img {
@@ -35,5 +35,7 @@
             vertical-align: middle;
             margin-right: 12px;
             height: 28px; }
+            .navbar .navbar__body ul li span img:not(:first-child) {
+              border-radius: 100px; }
 
 /*# sourceMappingURL=Navbar.css.map */

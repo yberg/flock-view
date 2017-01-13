@@ -16,14 +16,13 @@ export default class SignIn extends Component {
   }
 
   componentDidMount() {
-    window.onSuccess = onSuccess;
+    window.onGoogleSignIn = onGoogleSignIn;
     window.onFailure = onFailure;
     window.start = this.start;
     loadJS('https://apis.google.com/js/client:platform.js?onload=start');
   }
 
   start() {
-    console.log(this);
     self.props.updateState({gapi: this.gapi});
     let gapi = this.gapi;
     gapi.load('auth2', () => {
@@ -37,7 +36,7 @@ export default class SignIn extends Component {
       'height': 36,
       'longtitle': true,
       'theme': 'dark',
-      'onsuccess': onSuccess,
+      'onsuccess': onGoogleSignIn,
       'onfailure': onFailure
     });
   }
@@ -55,9 +54,10 @@ export default class SignIn extends Component {
       } else {
         body = JSON.parse(body);
         if (body.success) {
-          console.log('Signed in: ');
+          console.log('User info from server (Email account): ');
           console.log(body);
           let user = {
+            _id: body._id,
             email: body.email,
             name: body.name,
             firstName: body.firstName,
@@ -81,17 +81,15 @@ export default class SignIn extends Component {
           </div>
           <div className='card__body'>
             <form onSubmit={this.signInWithEmail.bind(this)}>
-              <div className='input-group'>
-                <span className='input-label'>
+              <div className='input-group input-group--elevated'>
+                <div className='input-group__row'>
                   <img src={email} role='presentation' />
-                </span>
-                <input type='email' name='email' placeholder='Email' required />
-              </div>
-              <div className='input-group'>
-                <span className='input-label'>
+                  <input type='email' name='email' placeholder='Email' required />
+                </div>
+                <div className='input-group__row'>
                   <img src={lock} role='presentation' />
-                </span>
-                <input type='password' name='password' placeholder='Password' />
+                  <input type='password' name='password' placeholder='Password' />
+                </div>
               </div>
               <div>
                 <button className='button button--blue'>
@@ -107,40 +105,27 @@ export default class SignIn extends Component {
           <div className='card__footer'>
             <h4>Register</h4>
             <form>
-              <div className='input-group'>
-                <span className='input-label'>
+              <div className='input-group input-group--elevated'>
+                <div className='input-group__row'>
                   <img src={email} role='presentation' />
-                </span>
-                <input type='email' className=''
-                placeholder='Email' required />
-              </div>
-              <div className='input-group'>
-                <span className='input-label'>
+                  <input type='email' placeholder='Email' required />
+                </div>
+                <div className='input-group__row'>
                   <img src={account} role='presentation' />
-                </span>
-                <input type='text' className=''
-                placeholder='First name' required />
-              </div>
-              <div className='input-group'>
-                <span className='input-label'>
+                  <input type='text' placeholder='First name' required />
+                </div>
+                <div className='input-group__row'>
                   <img src={account} role='presentation' />
-                </span>
-                <input type='text' className=''
-                placeholder='Last name' required />
-              </div>
-              <div className='input-group'>
-                <span className='input-label'>
+                  <input type='text' placeholder='Last name' required />
+                </div>
+                <div className='input-group__row'>
                   <img src={lock} role='presentation' />
-                </span>
-                <input type='password' className=''
-                placeholder='Password' required />
-              </div>
-              <div className='input-group'>
-                <span className='input-label'>
+                  <input type='password' placeholder='Password' required />
+                </div>
+                <div className='input-group__row'>
                   <img src={lock} role='presentation' />
-                </span>
-                <input type='password' className=''
-                placeholder='Repeat password' required />
+                  <input type='password' placeholder='Repeat password' required />
+                </div>
               </div>
               <button className='button button--green'
               href='#'>
@@ -169,8 +154,10 @@ function loadJS(src) {
   ref.parentNode.insertBefore(script, ref);
 }
 
-function onSuccess(googleUser) {
-  let userDetails = googleUser.getBasicProfile();
+function onGoogleSignIn(googleUser) {
+  const userDetails = googleUser.getBasicProfile();
+  console.log('Google user details: ');
+  console.log(userDetails);
   request.post('http://localhost:3001/auth', {
     form: {
       gmail: userDetails.getEmail(),
@@ -181,14 +168,16 @@ function onSuccess(googleUser) {
       console.log('error: ' + err.message);
     } else {
       body = JSON.parse(body);
-      console.log('Signed in: ');
+      console.log('User info from server (Google account): ');
       console.log(body);
-      let user = {
+      const user = {
+        _id: body._id,
         gmail: body.gmail,
         name: body.name,
         firstName: body.firstName,
         lastName: body.lastName,
-        familyId: body.familyId
+        familyId: body.familyId,
+        imageUrl: userDetails.getImageUrl()
       }
       self.props.signIn(user);
     }

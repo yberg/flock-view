@@ -24,20 +24,14 @@ export default class Navbar extends Component {
         <div className='navbar__body'>
           <ul>
             <li>
-              {
-                this.props.user.gmail ?
-                <span>
-                  <img src={google} role='presentation' />
-                  {this.props.user.name}
-                </span> : null
-              }
-              {
-                this.props.user.email ?
-                <span>
-                  <img src={account} role='presentation' />
-                  {this.props.user.name}
-                </span> : null
-              }
+              <span>
+                <img src={this.props.user.gmail ? google : account} role='presentation' />
+                {
+                  this.props.user.imageUrl ?
+                    <img src={this.props.user.imageUrl} role='presentation' /> : null
+                }
+                {this.props.user.name}
+              </span>
             </li>
           </ul>
         </div>

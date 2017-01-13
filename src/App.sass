@@ -1,3 +1,6 @@
+@import variables
+@import mixins
+
 html,
 body
   height: 100%
@@ -15,6 +18,12 @@ h1, h2, h3, h4, h5, h6
   color: inherit
   margin-top: 10px
   margin-bottom: 10px
+
+  img
+    vertical-align: middle
+    height: 20px
+    margin-right: 8px
+    margin-top: -1px
 
 h1
   font-size: 36px
@@ -51,3 +60,259 @@ h6
   display: flex
   flex-direction: row
   flex: 1
+
+.card
+  @include box-shadow
+  align-self: center
+  width: 400px
+  border-radius: $border-radius
+  overflow: hidden
+  background: $ui-color--base
+
+  .card__header
+    padding: 10px 20px
+    background: $ui-color--accent
+    border-bottom: 1px solid $border-color
+
+  .card__body
+    padding: 20px
+
+    .card__body__segment
+      margin: 20px 0
+
+      &:first-child
+        margin-top: 0
+
+      &:last-child
+        margin-bottom: 0
+
+  .card__footer
+    padding: 10px 20px
+    background: $ui-color--accent
+    border-top: 1px solid $border-color
+
+form
+  display: block
+  margin: 20px 0
+
+input
+  @include box-shadow
+  display: table-cell
+  position: relative
+  box-sizing: border-box
+  width: 100%
+  height: 42px
+  border: 0
+  border-radius: $border-radius
+  outline: none
+  padding: 0 10px
+  margin: 0
+  background: $white
+  font-size: 14px
+
+  &.input--large
+    height: 48px
+    padding: 0 12px
+    font-size: 16px
+
+  &.input--small
+    height: 36px
+    font-size: 13px
+
+  &:disabled
+    background: $gray200 !important
+    box-shadow: none
+    border: 1px solid $border-color
+
+.button
+  @include transition
+  @include box-shadow
+  position: relative
+  display: table-cell
+  padding: 8px 18px
+  height: 36px
+  background: linear-gradient($white, $gray100)
+  border: 1px solid $gray200
+  border-radius: $border-radius
+  color: $black
+  outline: none
+  font-size: 14px
+  vertical-align: middle
+  cursor: pointer
+
+  &.button--large
+    height: 48px
+    font-size: 16px
+
+  &:hover
+    background: linear-gradient($white, $gray200)
+
+  &:active
+    background: linear-gradient($gray100, $white)
+
+  &.button--blue
+    color: $white
+    background: linear-gradient($blue500, $blue600)
+    border: 1px solid $blue800
+
+    &:hover
+      background: linear-gradient($blue500, $blue800)
+
+    &:active
+      background: linear-gradient($blue600, $blue500)
+
+  &.button--green
+    color: $white
+    background: linear-gradient($green500, $green600)
+    border: 1px solid $green800
+
+    &:hover
+      background: linear-gradient($green500, $green800)
+
+    &:active
+      background: linear-gradient($green600, $green500)
+
+  &.button--amber
+    color: $white
+    background: linear-gradient($amber500, $amber600)
+    border: 1px solid $amber800
+
+    &:hover
+      background: linear-gradient($amber500, $amber800)
+
+    &:active
+      background: linear-gradient($amber600, $amber500)
+
+  &.button--red
+    color: $white
+    background: linear-gradient($red500, $red600)
+    border: 1px solid $red800
+
+    &:hover
+      background: linear-gradient($red500, $red800)
+
+    &:active
+      background: linear-gradient($red600, $red500)
+
+  & + .button
+    margin-left: 8px
+
+  & > img
+    display: inline-block
+    vertical-align: middle
+    height: 20px
+    margin-right: 6px
+    margin-left: -4px
+
+.input-label + *
+  margin-top: 4px
+
+.input-group
+  margin-bottom: 10px
+  overflow: hidden
+  background: $white
+
+  &.input-group--elevated
+    @include box-shadow
+    border-radius: $border-radius
+
+  .input-label
+    margin-bottom: 8px
+
+  .input-group__row
+    width: 100%
+    float: left
+    position: relative
+
+    &:not(:last-child)
+      //height: 43px
+
+      &:after
+        content : ''
+        position: absolute
+        bottom: 0
+        left: 8px
+        width: calc(100% - 20px)
+        height: 1px
+        border-bottom: 1px solid $border-color
+
+  img
+    position: absolute
+    z-index: 2
+    height: 20px
+    left: 8px
+    top: calc(50% - 10px)
+    pointer-events: none
+
+  input
+    border-radius: 0
+    border: 0
+    box-shadow: none
+    background: $white
+
+  img + input
+    padding-left: 36px
+
+.list
+  position: relative
+  overflow: hidden
+  display: block
+  padding: 4px 0
+
+  &.list--divider:after
+    content : ''
+    position: absolute
+    bottom: 0
+    left: 20px
+    width: calc(100% - 40px)
+    height: 1px
+    border-bottom: 1px solid $border-color
+
+  .list__title
+    margin-left: 20px
+    margin-bottom: 12px
+
+  .list__header
+    margin: 12px 0 8px 20px
+
+  a.list__item
+    position: relative
+    display: block
+    font-size: 14px
+    height: 16px
+    line-height: 16px
+    padding: 8px
+    color: $gray900
+    text-decoration: none
+
+    &:hover
+      background: $ui-color--hover
+
+    &.active
+      background: $ui-color--active
+      font-weight: 500
+
+      &.active--blue
+        border-right: 3px solid $blue500
+
+      &.active--amber
+        border-right: 3px solid $amber500
+
+    .list__item__icon
+      position: absolute
+      left: 24px
+      top: calc(50% - 10px)
+      height: 20px
+
+    span
+      padding-left: 46px
+
+.push-right
+  float: right
+
+.center
+  display: table
+  margin: 0 auto
+
+.round
+  border-radius: 1000px
