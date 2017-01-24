@@ -132,16 +132,16 @@ export default class Main extends Component {
     return (
       <div className='App'>
         {
-          !this.props.isLoggedIn ?
+          !this.props.isLoggedIn &&
           <SignIn
             user={this.props.user}
             signIn={this.signIn.bind(this)}
             isLoggedIn={this.props.isLoggedIn}
             gapi={this.state.gapi}
-            updateState={this.updateState.bind(this)} /> : null
+            updateState={this.updateState.bind(this)} />
         }
         {
-          this.props.isLoggedIn ?
+          this.props.isLoggedIn &&
           <div className='flex-container--column'>
             <Navbar
               user={this.props.user}
@@ -167,14 +167,14 @@ export default class Main extends Component {
                 isLoggedIn={this.props.isLoggedIn}
                 google={this.state.google} />
             </div>
-          </div> : null
+          </div>
         }
         {
-          this.state.settings ?
+          this.state.settings &&
           <Settings
             user={this.props.user}
             toggled={this.state.settings}
-            updateState={this.updateState.bind(this)} /> : null
+            updateState={this.updateState.bind(this)} />
         }
       </div>
     )

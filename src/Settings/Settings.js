@@ -52,7 +52,7 @@ export default class Settings extends Component {
               <span className='input-label'>Picture</span>
               <div style={{display: 'flex'}}>
                 <div>
-                  <img src={this.props.user.imageUrl || defaultProfilePic}
+                  <img src={this.props.user.imageUrl || this.props.user.googleImageUrl || defaultProfilePic}
                     className='round'
                     style={{height: '100px'}}
                     role='presentation' />

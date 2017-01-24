@@ -37,6 +37,10 @@ export default class GoogleMap extends Component {
       center: home
     });
 
+    self.map.addListener('rightclick', () => {
+      console.log('rightclick');
+    });
+
     // Load family
     if (self.props.user.familyId) {
       self.props.loadFamily(self.props.user.familyId, self.addMarkers);

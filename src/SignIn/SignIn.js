@@ -56,14 +56,7 @@ export default class SignIn extends Component {
         if (body.success) {
           console.log('User info from server (Email account): ');
           console.log(body);
-          let user = {
-            _id: body._id,
-            email: body.email,
-            name: body.name,
-            firstName: body.firstName,
-            lastName: body.lastName,
-            familyId: body.familyId
-          }
+          const user = body;
           self.props.signIn(user);
         } else {
           console.log(body);
@@ -102,42 +95,49 @@ export default class SignIn extends Component {
               </div>
             </form>
           </div>
-          <div className='card__footer'>
-            <h4>Register</h4>
-            <form>
-              <div className='input-group input-group--elevated'>
-                <div className='input-group__row'>
-                  <img src={email} role='presentation' />
-                  <input type='email' placeholder='Email' required />
+          {
+            this.props.register &&
+            <div className='card__footer'>
+              <h4>Register</h4>
+              <form>
+                <div className='input-group input-group--elevated'>
+                  <div className='input-group__row'>
+                    <img src={email} role='presentation' />
+                    <input type='email' placeholder='Email' required />
+                  </div>
+                  <div className='input-group__row'>
+                    <img src={account} role='presentation' />
+                    <input type='text' placeholder='First name' required />
+                  </div>
+                  <div className='input-group__row'>
+                    <img src={account} role='presentation' />
+                    <input type='text' placeholder='Last name' required />
+                  </div>
+                  <div className='input-group__row'>
+                    <img src={lock} role='presentation' />
+                    <input type='password' placeholder='Password' required />
+                  </div>
+                  <div className='input-group__row'>
+                    <img src={lock} role='presentation' />
+                    <input type='password' placeholder='Repeat password' required />
+                  </div>
                 </div>
-                <div className='input-group__row'>
-                  <img src={account} role='presentation' />
-                  <input type='text' placeholder='First name' required />
-                </div>
-                <div className='input-group__row'>
-                  <img src={account} role='presentation' />
-                  <input type='text' placeholder='Last name' required />
-                </div>
-                <div className='input-group__row'>
-                  <img src={lock} role='presentation' />
-                  <input type='password' placeholder='Password' required />
-                </div>
-                <div className='input-group__row'>
-                  <img src={lock} role='presentation' />
-                  <input type='password' placeholder='Repeat password' required />
-                </div>
-              </div>
-              <button className='button button--green'
-              href='#'>
-                <img src={done} role='presentation' />
-                Register
-              </button>
-            </form>
-          </div>
+                <button className='button button--green'
+                href='#'>
+                  <img src={done} role='presentation' />
+                  Register
+                </button>
+              </form>
+            </div>
+          }
         </div>
       </div>
     );
   }
+}
+
+SignIn.defaultProps = {
+  register: true
 }
 
 function loadJS(src) {
@@ -170,15 +170,8 @@ function onGoogleSignIn(googleUser) {
       body = JSON.parse(body);
       console.log('User info from server (Google account): ');
       console.log(body);
-      const user = {
-        _id: body._id,
-        gmail: body.gmail,
-        name: body.name,
-        firstName: body.firstName,
-        lastName: body.lastName,
-        familyId: body.familyId,
-        imageUrl: userDetails.getImageUrl()
-      }
+      const user = body;
+      user.googleImageUrl = userDetails.getImageUrl();
       self.props.signIn(user);
     }
   });

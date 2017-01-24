@@ -34,7 +34,7 @@ export default class Drawer extends Component {
                     props.setMarked(member._id);
                     props.requestOne(props.user._id, member._id);
                   }}>
-                    <img src={member.imageUrl ? member.imageUrl : account}
+                    <img src={member.imageUrl || member.googleImageUrl || account}
                     className='list__item__icon'
                     role='presentation' />
                     <span>{member.name}</span>
@@ -87,9 +87,7 @@ export default class Drawer extends Component {
                   <div key={i}>
                     <span>
                       <img src={member.email ? email : google} role='presentation' />
-                      {member.imageUrl ?
-                        <img src={member.imageUrl} role='presentation' /> : null
-                      }
+                      <img src={member.imageUrl || member.googleImageUrl || account} role='presentation' />
                       <h5 style={{display: 'inline-block'}}>{member.name}</h5>
                     </span>
                   </div>
@@ -105,7 +103,10 @@ export default class Drawer extends Component {
               if (favorite._id === props.marked) {
                 return (
                   <div key={i}>
-                    <h5>{favorite.name}</h5>
+                    <span>
+                      <img src={star} role='presentation' />
+                      <h5 style={{display: 'inline-block'}}>{favorite.name}</h5>
+                    </span>
                   </div>
                 );
               } else {
