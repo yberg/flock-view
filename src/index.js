@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import './index.css';
 
-import App from './App';
-import Main from './Main/Main';
-import Join from './Join/Join';
+import App from './Pages/App';
+import Main from './Pages/Main/Main';
+import Join from './Pages/Join/Join';
 
 ReactDOM.render(
   <Router history={browserHistory} >
