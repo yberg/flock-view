@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './Settings.css';
+
 import settings from '../../img/settings_gray.svg';
 import done from '../../img/done_white.svg';
 import clear from '../../img/clear_black.svg';
@@ -10,11 +12,11 @@ import lock from '../../img/lock_gray.svg';
 import image from '../../img/image_gray.svg';
 import defaultProfilePic from '../../img/account_blue.svg';
 
-export default class Settings extends Component {
+import * as AppActions from '../../Actions/AppActions';
+
+class Settings extends Component {
   close() {
-    this.props.updateState({
-      settings: false
-    });
+    this.props.dispatch(AppActions.closeSettings());
   }
 
   render() {
@@ -107,3 +109,9 @@ export default class Settings extends Component {
     )
   }
 }
+
+export default connect((store) => {
+  return {
+    user: store.user.user,
+  }
+})(Settings);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import request from 'request';
+import { connect } from 'react-redux';
 import './SignIn.css';
+
 import email from '../../img/email_gray.svg';
 import account from '../../img/account_gray.svg';
 import lock from '../../img/lock_gray.svg';
@@ -8,10 +9,11 @@ import done from '../../img/done_white.svg';
 const CLIENT_ID = require('../../../config').clientId;
 
 import * as UserActions from '../../Actions/UserActions';
+import * as SystemActions from '../../Actions/SystemActions';
 
 var self;
 
-export default class SignIn extends Component {
+class SignIn extends Component {
   constructor(props) {
     super(props);
     self = this;
@@ -25,8 +27,8 @@ export default class SignIn extends Component {
   }
 
   start() {
-    self.props.updateState({gapi: this.gapi});
     let gapi = this.gapi;
+    self.props.dispatch(SystemActions.setGapi(gapi));
     gapi.load('auth2', () => {
       gapi.auth2.init({
         client_id: CLIENT_ID,
@@ -47,7 +49,7 @@ export default class SignIn extends Component {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    UserActions.signInWithEmail(email, password, self.props.onSignIn);
+    this.props.dispatch(UserActions.signInWithEmail(email, password, self.props.onSignIn));
   }
 
   render() {
@@ -121,9 +123,11 @@ export default class SignIn extends Component {
   }
 }
 
+export default connect()(SignIn);
+
 SignIn.defaultProps = {
   register: true
-}
+};
 
 function loadJS(src) {
   for (let s of window.document.getElementsByTagName('script')) {
@@ -140,7 +144,7 @@ function loadJS(src) {
 }
 
 function onGoogleSignIn(googleUser) {
-  UserActions.signInWithGoogle(googleUser, self.props.onSignIn);
+  self.props.dispatch(UserActions.signInWithGoogle(googleUser, self.props.onSignIn));
 }
 
 function onFailure(error) {

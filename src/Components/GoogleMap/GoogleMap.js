@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './GoogleMap.css';
 const API_KEY = require('../../../config').apiKey;
 
 import * as FamilyActions from '../../Actions/FamilyActions';
+import * as SystemActions from '../../Actions/SystemActions';
+import * as AppActions from '../../Actions/AppActions';
 
 var self;
-let markerIconUrl = 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_';
+const markerIconUrl = 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_';
 
-export default class GoogleMap extends Component {
+class GoogleMap extends Component {
   constructor(props) {
     super(props);
     self = this;
@@ -31,7 +34,7 @@ export default class GoogleMap extends Component {
   initMap() {
     if (!self.google) {
       self.google = this.google;
-      self.props.updateState({google: this.google});
+      self.props.dispatch(SystemActions.setGoogle(this.google));
     }
     const home = {lat: 59.5068518, lng: 17.7573347};
     self.map = new self.google.maps.Map(self.mapRef, {
@@ -44,8 +47,9 @@ export default class GoogleMap extends Component {
     });
 
     // Load family
-    if (self.props.user.familyId) {
-      self.loadFamily(self.props.user.familyId, self.addMarkers);
+    const user = self.props.user;
+    if (user.familyId) {
+      self.props.dispatch(FamilyActions.loadFamily(user.familyId, self.addMarkers));
     }
   }
 
@@ -90,8 +94,8 @@ export default class GoogleMap extends Component {
   }
 
   componentDidUpdate() {
-    this.props.family.favorites.concat(this.props.family.members)
-    .forEach((item) => {
+    const family = this.props.family;
+    family.favorites.concat(family.members).forEach((item) => {
       if (item.marker) {
         item.marker.setPosition({lat: item.lat, lng: item.long});
         item.marker.setIcon(item.defaultMarkerIcon);
@@ -100,10 +104,6 @@ export default class GoogleMap extends Component {
         }
       }
     });
-  }
-
-  loadFamily(familyId, callback) {
-    FamilyActions.loadFamily(familyId, callback);
   }
 
   render() {
@@ -115,11 +115,25 @@ export default class GoogleMap extends Component {
   }
 }
 
+export default connect((store) => {
+  return {
+    user: store.user.user,
+    family: store.family.family,
+    marked: store.app.marked,
+    google: store.system.google,
+    socket: store.system.socket,
+  };
+})(GoogleMap);
+
 function onMarkerClick(src) {
   const dest = this.getTitle();
   console.log('clicked marker: ' + dest);
-  self.props.setMarked(dest);
-  self.props.requestOne(src, dest);
+  self.props.dispatch(AppActions.setMarked(dest));
+  console.log('requestOne(' + src + ', ' + dest + ')');
+  self.props.socket.emit('requestOne', {
+    src: src,
+    dest: dest
+  });
 }
 
 function loadJS(src) {

@@ -3,16 +3,16 @@ import React, { Component } from 'react';
 import SignIn from '../../Components/SignIn/SignIn';
 
 export default class Join extends Component {
+  register() {
+    
+  }
+
   render() {
     return (
       <div className='App'>
         <SignIn
           register={false}
-          user={this.props.user}
-          signIn={this.signIn.bind(this)}
-          isLoggedIn={this.props.isLoggedIn}
-          gapi={undefined}
-          updateState={this.props.updateState.bind(this)} />
+          onSignIn={this.register.bind(this)} />
       </div>
     )
   }
