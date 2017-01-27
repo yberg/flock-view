@@ -112,6 +112,6 @@ class Settings extends Component {
 
 export default connect((store) => {
   return {
-    user: store.user.user,
+    user: store.user,
   }
 })(Settings);

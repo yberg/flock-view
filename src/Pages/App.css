@@ -7,7 +7,8 @@ body {
   padding: 0;
   font-family: "Helvetica Neue", Helvetica, Arial;
   font-size: 14px;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+  color: #fff; }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
@@ -63,10 +64,10 @@ h6 {
   width: 400px;
   border-radius: 2px;
   overflow: hidden;
-  background: #fff; }
+  background: #424242; }
   .card .card__header {
     padding: 10px 20px;
-    background: #eee;
+    background: #282828;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
   .card .card__body {
     padding: 20px; }
@@ -78,7 +79,7 @@ h6 {
         margin-bottom: 0; }
   .card .card__footer {
     padding: 10px 20px;
-    background: #eee;
+    background: #282828;
     border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
 form {
@@ -225,12 +226,13 @@ input {
     left: 20px;
     width: calc(100% - 40px);
     height: 1px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
   .list .list__title {
     margin-left: 20px;
-    margin-bottom: 12px; }
+    margin-bottom: 16px; }
   .list .list__header {
-    margin: 12px 0 8px 20px; }
+    margin: 12px 0 8px 20px;
+    color: #e0e0e0; }
   .list a.list__item {
     position: relative;
     display: block;
@@ -238,12 +240,12 @@ input {
     height: 16px;
     line-height: 16px;
     padding: 8px;
-    color: #212121;
+    color: #fff;
     text-decoration: none; }
     .list a.list__item:hover {
-      background: rgba(0, 0, 0, 0.05); }
+      background: rgba(255, 255, 255, 0.05); }
     .list a.list__item.active {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.1);
       font-weight: 500; }
       .list a.list__item.active.active--blue {
         border-right: 3px solid #2196f3; }

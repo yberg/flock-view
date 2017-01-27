@@ -65,7 +65,8 @@ class GoogleMap extends Component {
           position: {lat: member.lat, lng: member.long},
           map: self.map,
           title: member._id,
-          icon: defaultMarkerIcon
+          icon: defaultMarkerIcon,
+          zIndex: 1
         });
         marker.addListener('click', onMarkerClick.bind(marker, user._id));
         member.marker = marker;
@@ -81,7 +82,8 @@ class GoogleMap extends Component {
           position: {lat: favorite.lat, lng: favorite.long},
           map: self.map,
           title: favorite._id,
-          icon: defaultMarkerIcon
+          icon: defaultMarkerIcon,
+          zIndex: 1
         });
         marker.addListener('click', onMarkerClick.bind(marker, user._id));
         favorite.marker = marker;
@@ -95,15 +97,20 @@ class GoogleMap extends Component {
 
   componentDidUpdate() {
     const family = this.props.family;
-    family.favorites.concat(family.members).forEach((item) => {
-      if (item.marker) {
-        item.marker.setPosition({lat: item.lat, lng: item.long});
-        item.marker.setIcon(item.defaultMarkerIcon);
-        if (item._id === self.props.marked) {
-          item.marker.setIcon(markerIconUrl + 'blue' + item.name.charAt(0).toUpperCase() + '.png');
+    if (family.favorites) {
+      family.favorites.concat(family.members).forEach((item) => {
+        if (item.marker) {
+          item.marker.setPosition({lat: item.lat, lng: item.long});
+          if (item._id === self.props.marked) {
+            item.marker.setIcon(markerIconUrl + 'blue' + item.name.charAt(0).toUpperCase() + '.png');
+            item.marker.setZIndex(this.google.maps.Marker.MAX_ZINDEX + 1);
+          } else {
+            item.marker.setIcon(item.defaultMarkerIcon);
+            item.marker.setZIndex(1);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   render() {
@@ -117,8 +124,8 @@ class GoogleMap extends Component {
 
 export default connect((store) => {
   return {
-    user: store.user.user,
-    family: store.family.family,
+    user: store.user,
+    family: store.family,
     marked: store.app.marked,
     google: store.system.google,
     socket: store.system.socket,

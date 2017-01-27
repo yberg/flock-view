@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Navbar.css';
 
-import people from '../../img/people_green.svg';
+import star from '../../img/star_amber.svg';
 import google from '../../img/google.svg';
 import account from '../../img/account_blue.svg';
 
@@ -11,7 +11,7 @@ export default class Navbar extends Component {
       <div className='navbar'>
         <div className='navbar__title'>
           <span>
-            <img src={people} role='presentation' />
+            <img src={star} role='presentation' />
             {this.props.title}
           </span>
         </div>

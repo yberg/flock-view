@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Drawer.css';
 
+import Dialog from '../Dialog/Dialog';
+
 import account from '../../img/account_blue.svg';
 import star from '../../img/star_amber.svg';
 import settings from '../../img/settings_gray.svg';
+import people from '../../img/people_green.svg';
 import exit from '../../img/exit_white.svg';
 import email from '../../img/email_gray.svg';
 import google from '../../img/google.svg';
@@ -13,6 +16,13 @@ import * as UserActions from '../../Actions/UserActions';
 import * as AppActions from '../../Actions/AppActions';
 
 class Drawer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showDialog: false
+    }
+  }
+
   openSettings() {
     this.props.dispatch(AppActions.openSettings());
   }
@@ -94,8 +104,14 @@ class Drawer extends Component {
     });
     return (
       <div className='drawer'>
-        <div>
+        <div style={{overflowY: 'auto', overflowX: 'hidden'}}>
           <div className='list list--divider'>
+            <div className='list__title'>
+              <h4>
+                <img src={people} role='presentation' />
+                { this.props.family.name }
+              </h4>
+            </div>
             <div className='list__header'>
               <h5>Members</h5>
             </div>
@@ -115,7 +131,7 @@ class Drawer extends Component {
           </div>
           <div className='drawer__segment'>
             <button className='button button--red center'
-            onClick={this.signOut.bind(this)}>
+            onClick={() => this.setState({showDialog: true})}>
               <img src={exit} role='presentation' />
               Sign out
             </button>
@@ -124,6 +140,14 @@ class Drawer extends Component {
         <div className='drawer__segment details'>
           { memberDetails || favoriteDetails }
         </div>
+
+        <Dialog
+          show={this.state.showDialog}
+          title={'Sign out'}
+          onConfirm={this.signOut.bind(this)}
+          onClose={() => this.setState({showDialog: false})}>
+          Do you really want to sign out?
+        </Dialog>
       </div>
     );
   }
@@ -131,8 +155,8 @@ class Drawer extends Component {
 
 export default connect((store) => {
   return {
-    user: store.user.user,
-    family: store.family.family,
+    user: store.user,
+    family: store.family,
     marked: store.app.marked,
     settings: store.app.settings,
     socket: store.system.socket,

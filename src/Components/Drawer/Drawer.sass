@@ -15,26 +15,33 @@
   .drawer__segment
     padding: 10px 20px
 
-.list .list__item img
-  border-radius: 100px
+  .list .list__item img
+    border-radius: 100px
 
-.details
-  position: relative
-  padding: 20px
-  font-size: 14px
+  .details
+    position: relative
+    padding: 20px
+    font-size: 14px
 
-  &:before
-    content: ''
-    position: absolute
-    top: 0
-    left: 20px
-    width: calc(100% - 40px)
-    height: 1px
-    border-bottom: 1px solid $border-color
+    &:before
+      content: ''
+      position: absolute
+      top: 0
+      left: 20px
+      width: calc(100% - 40px)
+      height: 1px
+      border-bottom: 1px solid $divider-color
 
-  span
-    img
-      height: 20px
-      border-radius: 100px
-      vertical-align: middle
-      margin-right: 8px
+    span
+      img
+        height: 20px
+        border-radius: 100px
+        vertical-align: middle
+        margin-right: 8px
+
+  ::-webkit-scrollbar
+    width: 12px
+
+  ::-webkit-scrollbar-thumb
+    border-radius: 10px
+    background: $ui-color--accent

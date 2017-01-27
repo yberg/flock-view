@@ -21,3 +21,6 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+
+// TODO:
+// Dialog component (Do you really want to...) popup window (like Settings)

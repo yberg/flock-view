@@ -49,7 +49,28 @@ class SignIn extends Component {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    this.props.dispatch(UserActions.signInWithEmail(email, password, self.props.onSignIn));
+    this.props.dispatch(UserActions.signInWithEmail(
+      {email, password},
+      this.props.onSignIn
+    ));
+  }
+
+  register(e) {
+    e.preventDefault();
+    const t = e.target;
+    const email = t.email.value;
+    const firstName = t.firstName.value;
+    const lastName = t.lastName.value;
+    const password = t.password.value;
+    const passwordRepeat = t.passwordRepeat.value;
+    if (password === passwordRepeat) {
+      this.props.dispatch(UserActions.register(
+        {email, firstName, lastName, password},
+        this.props.onRegister
+      ));
+    } else {
+      console.log('Passwords do not match');
+    }
   }
 
   render() {
@@ -71,13 +92,12 @@ class SignIn extends Component {
                   <input type='password' name='password' placeholder='Password' />
                 </div>
               </div>
-              <div>
-                <button className='button button--blue'>
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <button className='button button--blue'
+                  style={{float: 'left'}}>
                   <img src={done} role='presentation' />
                   Sign in
                 </button>
-                <span style={{marginLeft: '10px', color: '#333'}}>or...</span>
-                <p></p>
                 <div id='my-signin2'></div>
               </div>
             </form>
@@ -86,31 +106,30 @@ class SignIn extends Component {
             this.props.register &&
             <div className='card__footer'>
               <h4>Register</h4>
-              <form>
+              <form onSubmit={this.register.bind(this)}>
                 <div className='input-group input-group--elevated'>
                   <div className='input-group__row'>
                     <img src={email} role='presentation' />
-                    <input type='email' placeholder='Email' required />
+                    <input type='email' name='email' placeholder='Email' required />
                   </div>
                   <div className='input-group__row'>
                     <img src={account} role='presentation' />
-                    <input type='text' placeholder='First name' required />
+                    <input type='text' name='firstName' placeholder='First name' required />
                   </div>
                   <div className='input-group__row'>
                     <img src={account} role='presentation' />
-                    <input type='text' placeholder='Last name' required />
+                    <input type='text' name='lastName' placeholder='Last name' required />
                   </div>
                   <div className='input-group__row'>
                     <img src={lock} role='presentation' />
-                    <input type='password' placeholder='Password' required />
+                    <input type='password' name='password' placeholder='Password' required />
                   </div>
                   <div className='input-group__row'>
                     <img src={lock} role='presentation' />
-                    <input type='password' placeholder='Repeat password' required />
+                    <input type='password' name='passwordRepeat' placeholder='Repeat password' required />
                   </div>
                 </div>
-                <button className='button button--green'
-                href='#'>
+                <button className='button button--green'>
                   <img src={done} role='presentation' />
                   Register
                 </button>

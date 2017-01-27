@@ -3,7 +3,7 @@
   z-index: 3;
   display: flex;
   height: 60px;
-  background: #eee;
+  background: #282828;
   box-sizing: border-box;
   overflow: hidden; }
   .navbar * {
@@ -28,7 +28,7 @@
       .navbar .navbar__body ul li {
         display: inline-block; }
         .navbar .navbar__body ul li span {
-          padding: 20px 16px;
+          padding: 20px 8px;
           font-size: 18px;
           font-weight: 500; }
           .navbar .navbar__body ul li span img {

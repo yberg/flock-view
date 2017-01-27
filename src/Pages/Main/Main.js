@@ -57,15 +57,17 @@ class Main extends Component {
     return (
       <div className='App'>
         {
-          !this.props.user &&
-          <SignIn onSignIn={this.init.bind(this)} />
+          !this.props.user._id &&
+          <SignIn
+            onSignIn={this.init.bind(this)}
+            onRegister={this.init.bind(this)} />
         }
         {
-          this.props.user &&
+          this.props.user._id &&
           <div className='flex-container--column'>
             <Navbar
               user={this.props.user}
-              title={this.props.family.name} />
+              title={'Flock'} />
             <div className='flex-container--row'>
               <Drawer
                 onSignOut={this.signOut.bind(this)} />
@@ -84,8 +86,8 @@ class Main extends Component {
 
 export default connect((store) => {
   return {
-    user: store.user.user,
-    family: store.family.family,
+    user: store.user,
+    family: store.family,
     marked: store.app.marked,
     settings: store.app.settings,
     google: store.system.google,

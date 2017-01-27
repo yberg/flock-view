@@ -11,10 +11,8 @@ export default createStore(
   reducer,
   {
     family: {
-      family: {
-        members: [],
-        favorites: []
-      }
+      members: [],
+      favorites: []
     }
   },
   middleware);

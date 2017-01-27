@@ -1,6 +1,6 @@
 import request from 'request';
 
-export function signInWithEmail(email, password, callback) {
+export function signInWithEmail({email, password}, callback) {
   return function(dispatch) {
     request.post('http://localhost:3001/auth', {
       form: {
@@ -64,6 +64,38 @@ export function signInWithGoogle(googleUser, callback) {
     });
     console.log('Logged in as: ' + googleUser.getBasicProfile().getName()
       + ' (' + googleUser.getBasicProfile().getEmail() + ')');
+  }
+}
+
+export function register({email, firstName, lastName, password}, callback) {
+  return function(dispatch) {
+    request.post('http://localhost:3001/register', {
+      form: {
+        email,
+        firstName,
+        lastName,
+        password,
+      }
+    }, (err, httpResponse, body) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        body = JSON.parse(body);
+        console.log('Register response', body);
+        if (body.success) {
+          const user = body;
+          dispatch({
+            type: 'SIGN_IN',
+            payload: {
+              user
+            }
+          });
+          if (callback) {
+            callback(user);
+          }
+        }
+      }
+    });
   }
 }
 
