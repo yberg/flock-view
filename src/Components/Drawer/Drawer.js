@@ -50,13 +50,13 @@ class Drawer extends Component {
         href={'#' + member.name}
         className={'list__item' + (this.props.marked === member._id ? ' active active--blue' : '')}
         onClick={() => {
-          this.props.dispatch(AppActions.setMarked(member._id));
+          this.props.dispatch(AppActions.setMarked(member._id, 'MEMBER'));
           this.requestOne(this.props.user._id, member._id);
         }}>
           <img src={member.imageUrl || member.googleImageUrl || account}
           className='list__item__icon'
           role='presentation' />
-          <span>{member.name}</span>
+        <span>{member.firstName}</span>
         </a>
       );
     });
@@ -65,7 +65,7 @@ class Drawer extends Component {
         <a key={favorite._id}
         href={'#' + favorite.name}
         className={'list__item' + (this.props.marked === favorite._id ? ' active active--amber' : '')}
-        onClick={() => this.props.dispatch(AppActions.setMarked(favorite._id))}>
+        onClick={() => this.props.dispatch(AppActions.setMarked(favorite._id, 'FAVORITE'))}>
           <img src={star}
           className='list__item__icon'
           role='presentation' />
@@ -77,10 +77,16 @@ class Drawer extends Component {
       if (member._id === this.props.marked) {
         return (
           <div key={member._id}>
-            <span>
+            <span className='row'>
               <img src={member.email ? email : google} role='presentation' />
               <img src={member.imageUrl || member.googleImageUrl || account} role='presentation' />
               <h5 style={{display: 'inline-block'}}>{member.name}</h5>
+            </span>
+            <span className='row'>{member.name}</span>
+            <span className='row'><i>lat: </i><tt>{member.lat}</tt></span>
+            <span className='row'><i>long: </i><tt>{member.long}</tt></span>
+            <span className='row'>
+              Last updated: {member.lastUpdated}
             </span>
           </div>
         );
@@ -92,9 +98,11 @@ class Drawer extends Component {
       if (favorite._id === this.props.marked) {
         return (
           <div key={favorite._id}>
-            <span>
+            <span className='row'>
               <img src={star} role='presentation' />
               <h5 style={{display: 'inline-block'}}>{favorite.name}</h5>
+                <span className='row'><i>lat: </i><tt>{favorite.lat}</tt></span>
+                <span className='row'><i>long: </i><tt>{favorite.long}</tt></span>
             </span>
           </div>
         );
@@ -137,9 +145,13 @@ class Drawer extends Component {
             </button>
           </div>
         </div>
-        <div className='drawer__segment details'>
-          { memberDetails || favoriteDetails }
-        </div>
+        {
+          this.props.marked &&
+          <div className='drawer__segment details'>
+            { memberDetails }
+            { favoriteDetails }
+          </div>
+        }
 
         <Dialog
           show={this.state.showDialog}

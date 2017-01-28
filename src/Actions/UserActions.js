@@ -13,17 +13,9 @@ export function signInWithEmail({email, password}, callback) {
       } else {
         body = JSON.parse(body);
         if (body.success) {
-          console.log('User info from server (Email account): ', body);
+          console.log('User info from server (Email account):', body);
           const user = body;
-          dispatch({
-            type: 'SIGN_IN',
-            payload: {
-              user
-            }
-          });
-          if (callback) {
-            callback(user);
-          }
+          callback(user);
         } else {
           console.log(body);
         }
@@ -35,8 +27,7 @@ export function signInWithEmail({email, password}, callback) {
 export function signInWithGoogle(googleUser, callback) {
   return function(dispatch) {
     const userDetails = googleUser.getBasicProfile();
-    console.log('Google user details: ');
-    console.log(userDetails);
+    console.log('Google user details:', userDetails);
     request.post('http://localhost:3001/auth', {
       form: {
         gmail: userDetails.getEmail(),
@@ -47,19 +38,10 @@ export function signInWithGoogle(googleUser, callback) {
         console.log('error: ' + err.message);
       } else {
         body = JSON.parse(body);
-        console.log('User info from server (Google account): ');
-        console.log(body);
+        console.log('User info from server (Google account):', body);
         const user = body;
         user.googleImageUrl = userDetails.getImageUrl();
-        dispatch({
-          type: 'SIGN_IN',
-          payload: {
-            user
-          }
-        });
-        if (callback) {
-          callback(user);
-        }
+        callback(user);
       }
     });
     console.log('Logged in as: ' + googleUser.getBasicProfile().getName()
@@ -81,26 +63,59 @@ export function register({email, firstName, lastName, password}, callback) {
         console.log('error: ' + err.message);
       } else {
         body = JSON.parse(body);
-        console.log('Register response', body);
+        console.log('Register response:', body);
         if (body.success) {
           const user = body;
-          dispatch({
-            type: 'SIGN_IN',
-            payload: {
-              user
-            }
-          });
-          if (callback) {
-            callback(user);
-          }
+          callback(user);
         }
       }
     });
   }
 }
 
+export function signIn(user) {
+  return {
+    type: 'SIGN_IN',
+    payload: {
+      user
+    }
+  }
+}
+
 export function signOut() {
   return {
     type: 'SIGN_OUT'
+  }
+}
+
+export function joinFamily({_id, email, gmail}, familyId, callback) {
+  return function(dispatch) {
+    request.post('http://localhost:3001/family/' + familyId + '/join', {
+      form: {
+        _id,
+        email,
+        gmail
+      }
+    }, (err, httpResponse, body) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        body = JSON.parse(body);
+        console.log('Join response:', body);
+        if (body.success) {
+          const user = body;
+          dispatch({
+            type: 'JOIN_FAMILY',
+            payload: {
+              user
+            }
+          });
+          signIn(user);
+          if (callback) {
+            callback(user);
+          }
+        }
+      }
+    });
   }
 }

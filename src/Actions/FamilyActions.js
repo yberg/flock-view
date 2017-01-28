@@ -1,4 +1,5 @@
 import jsonp from 'jsonp';
+import request from 'request';
 
 export function loadFamily(familyId, callback) {
   return function(dispatch) {
@@ -42,6 +43,42 @@ export function loadFamily(familyId, callback) {
           if (callback) {
             callback();
           }
+        }
+      }
+    });
+  }
+}
+
+export function addFavorite(user, favorite, callback) {
+  return function(dispatch) {
+    request.post('http://localhost:3001/family/' + user.familyId + '/addFavorite', {
+      form: {
+        _id: user._id,
+        name: favorite.name,
+        lat: favorite.lat,
+        long: favorite.long,
+        radius: favorite.radius,
+      }
+    }, (err, httpResponse, body) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        body = JSON.parse(body);
+        const favorites = body;
+        if (body.success) {
+          delete body.success;
+          delete body.message;
+          dispatch({
+            type: 'ADD_FAVORITE',
+            payload: {
+              favorite: body
+            }
+          });
+          if (callback) {
+            callback(body);
+          }
+        } else {
+          console.log(body);
         }
       }
     });

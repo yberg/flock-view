@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './SignIn.css';
+import './Auth.css';
 
 import email from '../../img/email_gray.svg';
 import account from '../../img/account_gray.svg';
@@ -13,7 +13,7 @@ import * as SystemActions from '../../Actions/SystemActions';
 
 var self;
 
-class SignIn extends Component {
+class Auth extends Component {
   constructor(props) {
     super(props);
     self = this;
@@ -75,7 +75,7 @@ class SignIn extends Component {
 
   render() {
     return (
-      <div className='sign-in'>
+      <div className='auth'>
         <div className='card'>
           <div className='card__header'>
             <h4>Sign in</h4>
@@ -142,9 +142,9 @@ class SignIn extends Component {
   }
 }
 
-export default connect()(SignIn);
+export default connect()(Auth);
 
-SignIn.defaultProps = {
+Auth.defaultProps = {
   register: true
 };
 

@@ -1,19 +1,35 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import SignIn from '../../Components/SignIn/SignIn';
+import Auth from '../../Components/Auth/Auth';
 
-export default class Join extends Component {
-  register() {
-    
+import { joinFamily } from '../../Actions/UserActions';
+
+class Join extends Component {
+  join(user) {
+    this.props.dispatch(joinFamily({
+        _id: user._id,
+        email: user.email,
+        gmail: user.gmail,
+      },
+      this.props.routeParams.familyId,
+      () => this.props.router.push('/')
+    ));
   }
 
   render() {
+    console.log(this.props);
     return (
       <div className='App'>
-        <SignIn
-          register={false}
-          onSignIn={this.register.bind(this)} />
+        <Auth
+          onSignIn={this.join.bind(this)} />
       </div>
     )
   }
 }
+
+export default connect((store) => {
+  return {
+    user: store.user,
+  }
+})(Join)

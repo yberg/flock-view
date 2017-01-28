@@ -1,8 +1,9 @@
-export function setMarked(id) {
+export function setMarked(id, type) {
   return {
     type: 'SET_MARKED',
     payload: {
-      marked: id
+      marked: id,
+      markedType: type,
     }
   }
 }

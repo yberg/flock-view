@@ -1,46 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import io from 'socket.io-client';
 
-import SignIn from '../../Components/SignIn/SignIn';
+import Auth from '../../Components/Auth/Auth';
 import Navbar from '../../Components/Navbar/Navbar';
 import Drawer from '../../Components/Drawer/Drawer';
 import GoogleMap from '../../Components/GoogleMap/GoogleMap';
 import Settings from '../../Components/Settings/Settings';
 
 import * as SystemActions from '../../Actions/SystemActions';
-
-let socket;
+import { signIn } from '../../Actions/UserActions';
 
 class Main extends Component {
   init(user) {
-    // Init socket
-    console.log('http://localhost:3001, query:_id=' + user._id);
-    socket = io('http://localhost:3001', {query: '_id=' + user._id});
-    socket.on('newConnection', (data) => {
-      console.log(data);
-    }).on('updateRequest', (data) => {
-      // Update self
-      /*socket.emit('updateSelf', {
-        _id: 'test_id',
-      });*/
-    }).on('updatedOne', (data) => {
-      // Updated requested user
-      console.log('updatedOne: ');
-      console.log(data);
-      this.props.family.members.forEach((member) => {
-        if (member._id === data._id) {
-          member.lat = data.lat;
-          member.long = data.long;
-          member.lastUpdated = data.lastUpdated;
-        }
-      });
-      this.setState({});
-    }).on('socketError', (data) => {
-      console.log(data);
-    });
-
-    this.props.dispatch(SystemActions.setSocket(socket));
+    this.props.dispatch(SystemActions.initSocket(user));
+    this.props.dispatch(signIn(user));
   }
 
   signOut() {
@@ -50,7 +23,7 @@ class Main extends Component {
       });
       this.props.dispatch(SystemActions.setGapi(undefined));
     }
-    socket.disconnect();
+    this.props.dispatch(SystemActions.closeSocket());
   }
 
   render() {
@@ -58,7 +31,7 @@ class Main extends Component {
       <div className='App'>
         {
           !this.props.user._id &&
-          <SignIn
+          <Auth
             onSignIn={this.init.bind(this)}
             onRegister={this.init.bind(this)} />
         }

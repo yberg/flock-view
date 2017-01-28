@@ -1,8 +1,16 @@
 .google-map {
   flex: 1;
-  background-color: #a3ccff; }
+  background-color: #a3ccff;
+  overflow: hidden;
+  position: relative; }
   .google-map .map {
     width: 100%;
     height: 100%; }
+  .google-map #menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin-top: 4px; }
 
 /*# sourceMappingURL=GoogleMap.css.map */

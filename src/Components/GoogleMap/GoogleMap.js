@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './GoogleMap.css';
+
 const API_KEY = require('../../../config').apiKey;
 
 import * as FamilyActions from '../../Actions/FamilyActions';
@@ -10,10 +11,20 @@ import * as AppActions from '../../Actions/AppActions';
 var self;
 const markerIconUrl = 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_';
 
+const initialState = {
+  showMenu: false,
+  menu: {
+    x: 0,
+    y: 0,
+    marker: undefined
+  }
+};
+
 class GoogleMap extends Component {
   constructor(props) {
     super(props);
     self = this;
+    this.state = initialState;
   }
 
   componentDidMount() {
@@ -42,9 +53,27 @@ class GoogleMap extends Component {
       center: home
     });
 
-    self.map.addListener('rightclick', () => {
-      console.log('rightclick');
+    self.map.addListener('rightclick', (e) => {
+      console.log('rightclick', e);
+      self.hideMenu.call(self);
+      self.setState({
+        showMenu: true,
+        menu: {
+          x: e.pixel.x,
+          y: e.pixel.y,
+          marker: new self.google.maps.Marker({
+            position: {lat: e.latLng.lat(), lng: e.latLng.lng()},
+            map: self.map,
+            title: 'MENU_MARKER',
+            icon: markerIconUrl + 'green.png',
+            zIndex: 1
+          })
+        }
+      })
     });
+
+    self.map.addListener('bounds_changed', self.hideMenu.bind(self));
+    self.map.addListener('click', self.hideMenu.bind(self));
 
     // Load family
     const user = self.props.user;
@@ -53,46 +82,92 @@ class GoogleMap extends Component {
     }
   }
 
+  hideMenu() {
+    if (this.state.menu.marker) {
+      this.state.menu.marker.setMap(null);
+    }
+    this.setState(initialState);
+  }
+
+  addFavorite(e) {
+    e.preventDefault();
+    const t = e.target;
+    const markerPosition = self.state.menu.marker.getPosition();
+    const lat = markerPosition.lat();
+    const long = markerPosition.lng();
+    const favorite = {
+      name: t.name.value,
+      lat,
+      long,
+      radius: 30,
+    };
+    console.log('user: ', self.props.user);
+    this.props.dispatch(FamilyActions.addFavorite(
+      this.props.user,
+      favorite,
+      () => {
+        this.hideMenu();
+        const family = {...this.props.family};
+        family.favorites.map((f) => {
+          if (f.lat === favorite.lat) {
+            console.log('found!!!');
+            return this.addMarker(f, 'orange');
+          } else {
+            return f;
+          }
+        });
+        console.log('new family: ', family);
+        this.props.dispatch(FamilyActions.updateFamily(family));
+      }
+    ));
+  }
+
   addMarkers() {
-    const user = self.props.user;
-    const family = self.props.family;
+    const user = {...self.props.user};
+    const family = {...self.props.family};
 
     // Add family member markers
-    family.members.forEach((member) => {
-      if (member.lat && member.long) {
-        let defaultMarkerIcon =  markerIconUrl + 'red' + member.name.charAt(0).toUpperCase() + '.png';
-        let marker = new self.google.maps.Marker({
-          position: {lat: member.lat, lng: member.long},
-          map: self.map,
-          title: member._id,
-          icon: defaultMarkerIcon,
-          zIndex: 1
-        });
-        marker.addListener('click', onMarkerClick.bind(marker, user._id));
-        member.marker = marker;
-        member.defaultMarkerIcon = defaultMarkerIcon;
-      }
+    family.members.map((member) => {
+      return self.addMarker(member, 'red');
     });
 
     // Add family favorites markers
-    family.favorites.forEach((favorite) => {
-      if (favorite.lat && favorite.long) {
-        let defaultMarkerIcon = markerIconUrl + 'orange' + favorite.name.charAt(0).toUpperCase() + '.png';
-        let marker = new self.google.maps.Marker({
-          position: {lat: favorite.lat, lng: favorite.long},
-          map: self.map,
-          title: favorite._id,
-          icon: defaultMarkerIcon,
-          zIndex: 1
-        });
-        marker.addListener('click', onMarkerClick.bind(marker, user._id));
-        favorite.marker = marker;
-        favorite.defaultMarkerIcon = defaultMarkerIcon;
-      }
+    family.favorites.map((favorite) => {
+      return self.addMarker(favorite, 'orange');
     });
 
     // Update state
-    FamilyActions.updateFamily(family);
+    self.props.dispatch(FamilyActions.updateFamily(family));
+  }
+
+  addMarker(item, color) {
+    console.log('Adding marker for', item);
+    const onMarkerClick = function(src) {
+      const dest = this.getTitle();
+      console.log('clicked marker: ' + dest);
+      self.props.dispatch(AppActions.setMarked(dest));
+      console.log('requestOne(' + src + ', ' + dest + ')');
+      self.props.socket.emit('requestOne', {
+        src: src,
+        dest: dest
+      });
+    }
+
+    if (item.lat && item.long) {
+      const defaultMarkerIcon =  markerIconUrl + color + item.name.charAt(0).toUpperCase() + '.png';
+      const marker = new self.google.maps.Marker({
+        position: {lat: item.lat, lng: item.long},
+        map: self.map,
+        title: item._id,
+        icon: defaultMarkerIcon,
+        zIndex: 1
+      });
+      marker.addListener('click', onMarkerClick.bind(marker, self.props.user._id));
+      item.marker = marker;
+      item.defaultMarkerIcon = defaultMarkerIcon;
+    }
+    console.log('Done adding marker:', item);
+    return item;
   }
 
   componentDidUpdate() {
@@ -114,9 +189,45 @@ class GoogleMap extends Component {
   }
 
   render() {
+    const buttonStyle = {
+      flexGrow: 1,
+      marginTop: '4px'
+    }
+    const labelStyle = {
+      color: '#616161',
+      fontSize: '16px',
+      marginBottom: '2px',
+      textShadow: '1px 1px #fff',
+      fontWeight: 'bold'
+    }
     return (
       <div className='google-map'>
         <div className='map' ref='map'></div>
+        {
+          this.state.showMenu &&
+          <div id='menu' style={{
+              top: this.state.menu.y,
+              left: this.state.menu.x
+            }}>
+            <span style={labelStyle}>Add new favorite</span>
+            <form style={{margin: 0}} onSubmit={this.addFavorite.bind(this)}>
+              <input type='text' name='name'
+                placeholder='Name' autoComplete='off' />
+              // TODO: input för radius, rita cirkel runt marker
+              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                <button type='submit' className='button button--blue'
+                  style={buttonStyle}>
+                  Add
+                </button>
+                <button className='button button--red'
+                  style={{...buttonStyle, marginLeft: '4px'}}
+                  onClick={this.hideMenu.bind(this)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        }
       </div>
     );
   }
@@ -131,17 +242,6 @@ export default connect((store) => {
     socket: store.system.socket,
   };
 })(GoogleMap);
-
-function onMarkerClick(src) {
-  const dest = this.getTitle();
-  console.log('clicked marker: ' + dest);
-  self.props.dispatch(AppActions.setMarked(dest));
-  console.log('requestOne(' + src + ', ' + dest + ')');
-  self.props.socket.emit('requestOne', {
-    src: src,
-    dest: dest
-  });
-}
 
 function loadJS(src) {
   let script = window.document.createElement('script');

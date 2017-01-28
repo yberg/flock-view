@@ -15,7 +15,7 @@ ReactDOM.render(
     <Router history={browserHistory} >
       <Route path='/' component={App}>
         <IndexRoute component={Main} />
-        <Route path='join' component={Join} />
+        <Route path='join/:familyId' component={Join} />
       </Route>
     </Router>
   </Provider>,
