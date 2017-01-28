@@ -107,8 +107,8 @@ class GoogleMap extends Component {
       favorite,
       () => {
         this.hideMenu();
-        const family = {...this.props.family};
-        family.favorites.map((f) => {
+        const family = {...this.props.family}
+        family.favorites = this.props.family.favorites.map((f) => {
           if (f.lat === favorite.lat) {
             console.log('found!!!');
             return this.addMarker(f, 'orange');
@@ -213,7 +213,6 @@ class GoogleMap extends Component {
             <form style={{margin: 0}} onSubmit={this.addFavorite.bind(this)}>
               <input type='text' name='name'
                 placeholder='Name' autoComplete='off' />
-              // TODO: input för radius, rita cirkel runt marker
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <button type='submit' className='button button--blue'
                   style={buttonStyle}>

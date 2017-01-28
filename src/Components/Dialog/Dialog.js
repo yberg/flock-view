@@ -18,7 +18,7 @@ export default class Dialog extends Component {
             </div>
             <div className='card__footer'>
               <button className='button button--green'
-                onClick={this.props.onConfirm}>
+                onClick={() => {this.props.onConfirm(); this.props.onClose();}}>
                 <img src={done} role='presentation' />
                 Yes
               </button>

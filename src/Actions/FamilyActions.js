@@ -64,7 +64,6 @@ export function addFavorite(user, favorite, callback) {
         console.log('error: ' + err.message);
       } else {
         body = JSON.parse(body);
-        const favorites = body;
         if (body.success) {
           delete body.success;
           delete body.message;
@@ -72,6 +71,36 @@ export function addFavorite(user, favorite, callback) {
             type: 'ADD_FAVORITE',
             payload: {
               favorite: body
+            }
+          });
+          if (callback) {
+            callback(body);
+          }
+        } else {
+          console.log(body);
+        }
+      }
+    });
+  }
+}
+
+export function deleteFavorite(user, favorite, callback) {
+  return function(dispatch) {
+    request.post('http://localhost:3001/family/' + user.familyId + '/deleteFavorite', {
+      form: {
+        _id: user._id,
+        favoriteId: favorite._id,
+      }
+    }, (err, httpResponse, body) => {
+      if (err) {
+        console.log('error: ' + err.message);
+      } else {
+        body = JSON.parse(body);
+        if (body.success) {
+          dispatch({
+            type: 'DELETE_FAVORITE',
+            payload: {
+              favorite
             }
           });
           if (callback) {

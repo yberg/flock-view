@@ -32,6 +32,13 @@ export default function reducer(state=initialFamily, action) {
       return {
         ...state,
         favorites: [...state.favorites, action.payload.favorite]}
+    case 'DELETE_FAVORITE':
+      return {
+        ...state,
+        favorites: state.favorites.filter((favorite) => {
+          return favorite._id !== action.payload.favorite._id;
+        })
+      }
     default:
       return state
   }

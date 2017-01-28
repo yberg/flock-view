@@ -11,7 +11,9 @@ import people from '../../img/people_green.svg';
 import exit from '../../img/exit_white.svg';
 import email from '../../img/email_gray.svg';
 import google from '../../img/google.svg';
+import bin from '../../img/bin_white.svg';
 
+import { deleteFavorite } from '../../Actions/FamilyActions';
 import * as UserActions from '../../Actions/UserActions';
 import * as AppActions from '../../Actions/AppActions';
 
@@ -19,7 +21,9 @@ class Drawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDialog: false
+      showSignOutDialog: false,
+      showDeleteFavoriteDialog: false,
+      favoriteToDelete: undefined
     }
   }
 
@@ -33,6 +37,18 @@ class Drawer extends Component {
       src: src,
       dest: dest
     });
+  }
+
+  deleteFavorite(favorite) {
+    console.log('Delete', favorite);
+    this.props.dispatch(deleteFavorite(
+      this.props.user,
+      favorite,
+      () => {
+        favorite.marker.setMap(null);
+        this.setState({favoriteToDelete: undefined});
+      }
+    ));
   }
 
   signOut() {
@@ -101,9 +117,18 @@ class Drawer extends Component {
             <span className='row'>
               <img src={star} role='presentation' />
               <h5 style={{display: 'inline-block'}}>{favorite.name}</h5>
-                <span className='row'><i>lat: </i><tt>{favorite.lat}</tt></span>
-                <span className='row'><i>long: </i><tt>{favorite.long}</tt></span>
             </span>
+            <span className='row'><i>lat: </i><tt>{favorite.lat}</tt></span>
+            <span className='row'><i>long: </i><tt>{favorite.long}</tt></span>
+            <button className='button button--red button--small'
+              style={{marginTop: '4px'}}
+              onClick={() => this.setState({
+                favoriteToDelete: favorite,
+                showDeleteFavoriteDialog: true
+              })}>
+              <img src={bin} role='presentation' />
+              Delete
+            </button>
           </div>
         );
       } else {
@@ -139,7 +164,7 @@ class Drawer extends Component {
           </div>
           <div className='drawer__segment'>
             <button className='button button--red center'
-            onClick={() => this.setState({showDialog: true})}>
+            onClick={() => this.setState({showSignOutDialog: true})}>
               <img src={exit} role='presentation' />
               Sign out
             </button>
@@ -154,11 +179,20 @@ class Drawer extends Component {
         }
 
         <Dialog
-          show={this.state.showDialog}
+          show={this.state.showSignOutDialog}
           title={'Sign out'}
           onConfirm={this.signOut.bind(this)}
-          onClose={() => this.setState({showDialog: false})}>
+          onClose={() => this.setState({showSignOutDialog: false})}>
           Do you really want to sign out?
+        </Dialog>
+        <Dialog
+          show={this.state.showDeleteFavoriteDialog}
+          title={'Delete favorite'}
+          onConfirm={this.deleteFavorite.bind(this, this.state.favoriteToDelete)}
+          onClose={() => this.setState({showDeleteFavoriteDialog: false})}>
+          Do you really want to delete "
+          {this.state.favoriteToDelete && this.state.favoriteToDelete.name}
+          "?
         </Dialog>
       </div>
     );
