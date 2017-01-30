@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import cookie from 'react-cookie';
+import './Main.css';
 
 import Auth from '../../Components/Auth/Auth';
 import Navbar from '../../Components/Navbar/Navbar';
@@ -14,6 +16,7 @@ class Main extends Component {
   init(user) {
     this.props.dispatch(SystemActions.initSocket(user));
     this.props.dispatch(signIn(user));
+    cookie.save('user', user, { path: '/' });
   }
 
   signOut() {
@@ -27,16 +30,17 @@ class Main extends Component {
   }
 
   render() {
-    return (
-      <div className='App'>
-        {
-          !this.props.user._id &&
+    if (!this.props.user._id) {
+      return (
+        <div className='App'>
           <Auth
             onSignIn={this.init.bind(this)}
             onRegister={this.init.bind(this)} />
-        }
-        {
-          this.props.user._id &&
+        </div>
+      )
+    } else {
+      return (
+        <div className='App'>
           <div className='flex-container--column'>
             <Navbar
               user={this.props.user}
@@ -46,14 +50,16 @@ class Main extends Component {
                 onSignOut={this.signOut.bind(this)} />
               <GoogleMap />
             </div>
+            {
+              this.props.settings &&
+              <div className='container--center'>
+                <Settings />
+              </div>
+            }
           </div>
-        }
-        {
-          this.props.settings &&
-          <Settings />
-        }
-      </div>
-    )
+        </div>
+      )
+    }
   }
 }
 

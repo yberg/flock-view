@@ -3,6 +3,11 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  z-index: 11; }
+  z-index: 11;
+  pointer-events: none; }
+  .dialog .card {
+    pointer-events: all; }
+  .dialog .card__header img {
+    fill: black; }
 
 /*# sourceMappingURL=Dialog.css.map */

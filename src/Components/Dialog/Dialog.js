@@ -11,7 +11,11 @@ export default class Dialog extends Component {
         <div className='dialog'>
           <div className='card'>
             <div className='card__header'>
-              <h4>{ this.props.title }</h4>
+              <h4>
+                { this.props.icon &&
+                  <img src={this.props.icon} role='presentation' /> }
+                { this.props.title }
+              </h4>
             </div>
             <div className='card__body'>
               { this.props.children }

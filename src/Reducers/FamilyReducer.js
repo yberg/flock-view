@@ -39,6 +39,19 @@ export default function reducer(state=initialFamily, action) {
           return favorite._id !== action.payload.favorite._id;
         })
       }
+    // case 'SET_MARKED':
+    //   const favorites = {...state.favorites};
+    //   favorites.map((favorite) => {
+    //     if (favorite === action.payload.marked) {
+    //       favorite.circle.setMap()
+    //     } else {
+    //       favorite.circle.setMap(null)
+    //     }
+    //   });
+    //   return {
+    //     ...state,
+    //     favorites
+    //   }
     default:
       return state
   }

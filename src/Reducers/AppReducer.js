@@ -4,7 +4,11 @@ export default function reducer(state={
 }, action) {
   switch (action.type) {
     case 'SET_MARKED':
-      return {...state, marked: action.payload.marked}
+      return {
+        ...state,
+        marked: action.payload.marked,
+        markerType: action.payload.markerType
+      }
     case 'OPEN_SETTINGS':
       return {...state, settings: true}
     case 'CLOSE_SETTINGS':

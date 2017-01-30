@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import cookie from 'react-cookie';
 import './Auth.css';
+
+const CLIENT_ID = require('../../../config').clientId;
 
 import email from '../../img/email_gray.svg';
 import account from '../../img/account_gray.svg';
 import lock from '../../img/lock_gray.svg';
 import done from '../../img/done_white.svg';
-const CLIENT_ID = require('../../../config').clientId;
 
 import * as UserActions from '../../Actions/UserActions';
 import * as SystemActions from '../../Actions/SystemActions';

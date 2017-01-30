@@ -46,7 +46,8 @@ class Drawer extends Component {
       favorite,
       () => {
         favorite.marker.setMap(null);
-        this.setState({favoriteToDelete: undefined});
+        favorite.circle.setMap(null);
+        this.setState({ favoriteToDelete: undefined });
       }
     ));
   }
@@ -59,82 +60,74 @@ class Drawer extends Component {
   }
 
   render() {
-    const family = this.props.family;
+    const { family } = this.props;
     const familyMembers = family.members && family.members.map((member) => {
       return (
         <a key={member._id}
-        href={'#' + member.name}
-        className={'list__item' + (this.props.marked === member._id ? ' active active--blue' : '')}
-        onClick={() => {
-          this.props.dispatch(AppActions.setMarked(member._id, 'MEMBER'));
-          this.requestOne(this.props.user._id, member._id);
-        }}>
+          href={'#' + member.name}
+          className={'list__item' + (this.props.marked === member ? ' active active--blue' : '')}
+          onClick={() => {
+            this.props.dispatch(AppActions.setMarked(member, 'MEMBER'));
+            this.requestOne(this.props.user._id, member._id);
+          }}>
           <img src={member.imageUrl || member.googleImageUrl || account}
-          className='list__item__icon'
-          role='presentation' />
-        <span>{member.firstName}</span>
+            className='list__item__icon'
+            role='presentation' />
+          <span>{member.firstName}</span>
         </a>
       );
     });
     const familyFavorites = family.favorites && family.favorites.map((favorite) => {
       return (
         <a key={favorite._id}
-        href={'#' + favorite.name}
-        className={'list__item' + (this.props.marked === favorite._id ? ' active active--amber' : '')}
-        onClick={() => this.props.dispatch(AppActions.setMarked(favorite._id, 'FAVORITE'))}>
+          href={'#' + favorite.name}
+          className={'list__item' + (this.props.marked === favorite ? ' active active--amber' : '')}
+          onClick={() => this.props.dispatch(AppActions.setMarked(favorite, 'FAVORITE'))}>
           <img src={star}
-          className='list__item__icon'
-          role='presentation' />
+            className='list__item__icon'
+            role='presentation' />
           <span>{favorite.name}</span>
         </a>
       );
     });
-    const memberDetails = family.members && family.members.map((member) => {
-      if (member._id === this.props.marked) {
-        return (
-          <div key={member._id}>
-            <span className='row'>
-              <img src={member.email ? email : google} role='presentation' />
-              <img src={member.imageUrl || member.googleImageUrl || account} role='presentation' />
-              <h5 style={{display: 'inline-block'}}>{member.name}</h5>
-            </span>
-            <span className='row'>{member.name}</span>
-            <span className='row'><i>lat: </i><tt>{member.lat}</tt></span>
-            <span className='row'><i>long: </i><tt>{member.long}</tt></span>
-            <span className='row'>
-              Last updated: {member.lastUpdated}
-            </span>
-          </div>
-        );
-      } else {
-        return null;
-      }
-    });
-    const favoriteDetails = family.favorites && family.favorites.map((favorite) => {
-      if (favorite._id === this.props.marked) {
-        return (
-          <div key={favorite._id}>
-            <span className='row'>
-              <img src={star} role='presentation' />
-              <h5 style={{display: 'inline-block'}}>{favorite.name}</h5>
-            </span>
-            <span className='row'><i>lat: </i><tt>{favorite.lat}</tt></span>
-            <span className='row'><i>long: </i><tt>{favorite.long}</tt></span>
-            <button className='button button--red button--small'
-              style={{marginTop: '4px'}}
-              onClick={() => this.setState({
-                favoriteToDelete: favorite,
-                showDeleteFavoriteDialog: true
-              })}>
-              <img src={bin} role='presentation' />
-              Delete
-            </button>
-          </div>
-        );
-      } else {
-        return null;
-      }
-    });
+
+    let details;
+    const { marked } = this.props;
+    if (this.props.markerType === 'MEMBER') {
+      details =
+        <div key={marked._id}>
+          <span className='row'>
+            <img src={marked.email ? email : google} role='presentation' />
+            <img src={marked.imageUrl || marked.googleImageUrl || account} role='presentation' />
+            <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
+          </span>
+          <span className='row'>{marked.name}</span>
+          <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
+          <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
+          <span className='row'>
+            Last updated: {marked.lastUpdated}
+          </span>
+        </div>
+    } else if (this.props.markerType === 'FAVORITE') {
+      details =
+        <div key={marked._id}>
+          <span className='row'>
+            <img src={star} role='presentation' />
+            <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
+          </span>
+          <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
+          <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
+          <button className='button button--red button--small'
+            style={{marginTop: '4px'}}
+            onClick={() => this.setState({
+              favoriteToDelete: marked,
+              showDeleteFavoriteDialog: true
+            })}>
+            <img src={bin} role='presentation' />
+            Delete
+          </button>
+        </div>
+    }
     return (
       <div className='drawer'>
         <div style={{overflowY: 'auto', overflowX: 'hidden'}}>
@@ -173,14 +166,14 @@ class Drawer extends Component {
         {
           this.props.marked &&
           <div className='drawer__segment details'>
-            { memberDetails }
-            { favoriteDetails }
+            { details }
           </div>
         }
 
         <Dialog
           show={this.state.showSignOutDialog}
           title={'Sign out'}
+          icon={exit}
           onConfirm={this.signOut.bind(this)}
           onClose={() => this.setState({showSignOutDialog: false})}>
           Do you really want to sign out?
@@ -188,10 +181,11 @@ class Drawer extends Component {
         <Dialog
           show={this.state.showDeleteFavoriteDialog}
           title={'Delete favorite'}
+          icon={bin}
           onConfirm={this.deleteFavorite.bind(this, this.state.favoriteToDelete)}
           onClose={() => this.setState({showDeleteFavoriteDialog: false})}>
           Do you really want to delete "
-          {this.state.favoriteToDelete && this.state.favoriteToDelete.name}
+          { this.state.favoriteToDelete && this.state.favoriteToDelete.name }
           "?
         </Dialog>
       </div>
@@ -204,6 +198,7 @@ export default connect((store) => {
     user: store.user,
     family: store.family,
     marked: store.app.marked,
+    markerType: store.app.markerType,
     settings: store.app.settings,
     socket: store.system.socket,
   }

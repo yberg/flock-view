@@ -7,7 +7,11 @@ import account from '../../img/account_blue.svg';
 
 export default class Navbar extends Component {
   render() {
-    return(
+    let profilePic;
+    if (this.props.user.gmail) {
+      profilePic = <img src={this.props.user.imageUrl || this.props.user.googleImageUrl} role='presentation' />
+    }
+    return (
       <div className='navbar'>
         <div className='navbar__title'>
           <span>
@@ -20,10 +24,7 @@ export default class Navbar extends Component {
             <li>
               <span>
                 <img src={this.props.user.gmail ? google : account} role='presentation' />
-                {
-                  this.props.user.imageUrl ?
-                    <img src={this.props.user.imageUrl} role='presentation' /> : null
-                }
+                { profilePic }
                 {this.props.user.name}
               </span>
             </li>

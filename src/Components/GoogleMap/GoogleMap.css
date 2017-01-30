@@ -1,16 +1,26 @@
-.google-map {
+#google-map {
   flex: 1;
   background-color: #a3ccff;
   overflow: hidden;
   position: relative; }
-  .google-map .map {
+  #google-map .map {
     width: 100%;
     height: 100%; }
-  .google-map #menu {
+  #google-map #menu {
     position: absolute;
     display: flex;
     flex-direction: column;
-    width: 200px;
-    margin-top: 4px; }
+    width: 250px; }
+    #google-map #menu .input-container {
+      display: flex;
+      flex-direction: row; }
+      #google-map #menu .input-container input:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        flex-grow: 2; }
+      #google-map #menu .input-container input:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        width: 85px; }
 
 /*# sourceMappingURL=GoogleMap.css.map */
