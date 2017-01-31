@@ -2,28 +2,51 @@
 @import ../../mixins
 
 .settings
+  position: absolute
+  width: 100%
+  display: flex
+  justify-content: center
+  z-index: 11
+  pointer-events: none
 
-  .card__header a
-    font-size: 28px
-    color: $gray700
-    text-decoration: none
-    margin-top: -4px
-    cursor: pointer
+  .card
+    @include box-shadow--large
+    pointer-events: all
 
-    &:hover
-      color: $gray800
+    .card__header a
+      font-size: 28px
+      color: $gray700
+      text-decoration: none
+      margin-top: -4px
+      cursor: pointer
 
-  .input-container
-    position: relative
-    margin-bottom: 10px
+      &:hover
+        color: $red600
 
-    img
-      position: absolute
-      z-index: 2
-      height: 20px
-      left: 8px
-      top: calc(50% - 10px)
-      pointer-events: none
+    .input-container
+      position: relative
+      margin-bottom: 10px
 
-    input
-      padding-left: 36px
+      img
+        position: absolute
+        z-index: 2
+        height: 20px
+        left: 8px
+        top: calc(50% - 10px)
+        pointer-events: none
+
+      input
+        padding-left: 36px
+
+.settings-enter
+  margin-top: -620px
+
+.settings-enter.settings-enter-active
+  margin-top: 0
+  transition: 200ms ease-out
+
+.settings-leave
+
+.settings-leave.settings-leave-active
+  margin-top: -620px
+  transition: 200ms ease-in

@@ -7,7 +7,6 @@ import Auth from '../../Components/Auth/Auth';
 import Navbar from '../../Components/Navbar/Navbar';
 import Drawer from '../../Components/Drawer/Drawer';
 import GoogleMap from '../../Components/GoogleMap/GoogleMap';
-import Settings from '../../Components/Settings/Settings';
 
 import * as SystemActions from '../../Actions/SystemActions';
 import { signIn } from '../../Actions/UserActions';
@@ -50,12 +49,6 @@ class Main extends Component {
                 onSignOut={this.signOut.bind(this)} />
               <GoogleMap />
             </div>
-            {
-              this.props.settings &&
-              <div className='container--center'>
-                <Settings />
-              </div>
-            }
           </div>
         </div>
       )
@@ -68,7 +61,6 @@ export default connect((store) => {
     user: store.user,
     family: store.family,
     marked: store.app.marked,
-    settings: store.app.settings,
     google: store.system.google,
     gapi: store.system.gapi,
   };

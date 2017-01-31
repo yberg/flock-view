@@ -1,0 +1,20 @@
+.modal {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 11;
+  pointer-events: none; }
+
+.modal-enter {
+  margin-top: -620px; }
+
+.modal-enter.modal-enter-active {
+  margin-top: 0;
+  transition: 200ms ease-out; }
+
+.modal-leave.modal-leave-active {
+  margin-top: -620px;
+  transition: 200ms ease-in; }
+
+/*# sourceMappingURL=Modal.css.map */

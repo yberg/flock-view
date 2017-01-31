@@ -9,7 +9,7 @@
   .navbar * {
     box-sizing: border-box; }
   .navbar .navbar__title {
-    width: 220px;
+    width: 250px;
     padding-left: 20px;
     font-size: 18px;
     font-weight: 500;
@@ -37,5 +37,14 @@
             height: 28px; }
             .navbar .navbar__body ul li span img:not(:first-child) {
               border-radius: 100px; }
+
+.navbar-appear {
+  margin-top: -10px;
+  opacity: 0.01; }
+
+.navbar-appear.navbar-appear-active {
+  margin-top: 0;
+  transition: 500ms ease-out;
+  opacity: 1; }
 
 /*# sourceMappingURL=Navbar.css.map */

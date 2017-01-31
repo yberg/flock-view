@@ -2,7 +2,7 @@
 @import ../../mixins
 
 .drawer
-  @include box-shadow
+  @include box-shadow--large
   background: $ui-color--primary
   width: $drawer-width
   padding: 20px 0
@@ -48,3 +48,10 @@
   ::-webkit-scrollbar-thumb
     border-radius: 10px
     background: $ui-color--accent
+
+.drawer-appear
+  opacity: 0.01
+
+.drawer-appear.drawer-appear-active
+  transition: 1000ms ease-out
+  opacity: 1

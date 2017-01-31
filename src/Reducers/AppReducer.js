@@ -1,18 +1,19 @@
-export default function reducer(state={
+const initialState = {
   marked: undefined,
-  settings: false
-}, action) {
+};
+
+export default function reducer(state=initialState, action) {
   switch (action.type) {
+    case 'SIGN_OUT':
+      return {...initialState}
     case 'SET_MARKED':
       return {
         ...state,
         marked: action.payload.marked,
         markerType: action.payload.markerType
       }
-    case 'OPEN_SETTINGS':
-      return {...state, settings: true}
-    case 'CLOSE_SETTINGS':
-      return {...state, settings: false}
+    case 'DELETE_FAVORITE':
+      return {...state, marked: undefined, markerType: undefined}
     default:
       return state
   }

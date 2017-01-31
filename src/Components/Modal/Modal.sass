@@ -1,0 +1,24 @@
+.modal
+  position: absolute
+  width: 100%
+  display: flex
+  justify-content: center
+  z-index: 11
+  pointer-events: none
+
+.modal-enter
+  //opacity: 0.01
+  margin-top: -620px
+
+.modal-enter.modal-enter-active
+  //opacity: 1
+  margin-top: 0
+  transition: 200ms ease-out
+
+.modal-leave
+  //opacity: 1
+
+.modal-leave.modal-leave-active
+  //opacity: 0.01
+  margin-top: -620px
+  transition: 200ms ease-in

@@ -1,4 +1,4 @@
-const initialFamily = {
+const initialState = {
   id: undefined,
   name: undefined,
   favorites: [],
@@ -6,12 +6,12 @@ const initialFamily = {
   fetching: false
 }
 
-export default function reducer(state=initialFamily, action) {
+export default function reducer(state=initialState, action) {
   switch (action.type) {
     case 'UPDATE_FAMILY':
       return {...state, ...action.payload.family}
     case 'SIGN_OUT':
-      return {...initialFamily}
+      return {...initialState}
     case 'UPDATE_ONE':
       return {
         ...state,
@@ -39,19 +39,6 @@ export default function reducer(state=initialFamily, action) {
           return favorite._id !== action.payload.favorite._id;
         })
       }
-    // case 'SET_MARKED':
-    //   const favorites = {...state.favorites};
-    //   favorites.map((favorite) => {
-    //     if (favorite === action.payload.marked) {
-    //       favorite.circle.setMap()
-    //     } else {
-    //       favorite.circle.setMap(null)
-    //     }
-    //   });
-    //   return {
-    //     ...state,
-    //     favorites
-    //   }
     default:
       return state
   }

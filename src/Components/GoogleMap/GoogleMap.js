@@ -18,7 +18,8 @@ const MarkerType = {
 const circleStyle = {
   fillColor: '#4caf50',
   strokeColor: '#4caf50',
-  strokeOpacity: 0.5
+  strokeOpacity: 0.5,
+  strokeWeight: 2
 };
 
 const initialState = {
@@ -50,7 +51,6 @@ class GoogleMap extends Component {
         radius
       },
     });
-    console.log('state:', self.state);
   }
 
   componentDidMount() {
@@ -69,7 +69,6 @@ class GoogleMap extends Component {
   }
 
   initMap() {
-    console.log('Will init');
     if (!self.google) {
       self.google = this.google;
       self.props.dispatch(SystemActions.setGoogle(this.google));
@@ -80,23 +79,20 @@ class GoogleMap extends Component {
       center: home
     });
 
-    console.log('Will mark');
-
     const marker = new self.google.maps.Marker({
+      map: self.map,
       title: 'MENU_MARKER',
       icon: markerIconUrl + 'green.png',
       zIndex: 1
     });
 
-    console.log('Will circle');
-
     const circle = new self.google.maps.Circle({
-      radius: Number(self.state.menu.radius),  // metres
+      map: self.map,
+      radius: Number(self.state.menu.radius),
+      visible: false,
       ...circleStyle
     });
     circle.bindTo('center', marker, 'position');
-
-    console.log('Will set state');
 
     self.setState({
       menu: {
@@ -106,20 +102,15 @@ class GoogleMap extends Component {
       }
     });
 
-    console.log('state:', self.state);
-
     self.map.addListener('rightclick', (e) => {
       self.hideMenu.call(self);
 
-      console.log('state', self.state);
-
       const { x, y } = e.pixel;
       const { clientWidth, clientHeight } = document.getElementById('google-map');
-      document.getElementById('google-map').clientHeight
       const { marker, circle } = self.state.menu;
-      marker.setMap(self.map);
+      marker.setVisible(true);
       marker.setPosition({lat: e.latLng.lat(), lng: e.latLng.lng()});
-      circle.setMap(self.map);
+      circle.setVisible(true);
       self.setState({
         showMenu: true,
         menu: {
@@ -130,7 +121,6 @@ class GoogleMap extends Component {
           marginTop: y > clientHeight - 150 ? '-150px' : '0',
         }
       });
-      console.log('state', self.state);
     });
 
     self.map.addListener('bounds_changed', self.hideMenu.bind(self));
@@ -145,10 +135,10 @@ class GoogleMap extends Component {
 
   hideMenu() {
     if (this.state.menu.marker) {
-      this.state.menu.marker.setMap(null);
+      this.state.menu.marker.setVisible(false);
     }
     if (this.state.menu.circle) {
-      this.state.menu.circle.setMap(null);
+      this.state.menu.circle.setVisible(false);
     }
     this.setState({ showMenu: false });
   }
@@ -165,7 +155,6 @@ class GoogleMap extends Component {
       long,
       radius: 30,
     };
-    console.log('user: ', self.props.user);
     this.props.dispatch(FamilyActions.addFavorite(
       this.props.user,
       favorite,
@@ -179,7 +168,6 @@ class GoogleMap extends Component {
             return f;
           }
         });
-        console.log('new family: ', family);
         this.props.dispatch(FamilyActions.updateFamily(family));
       }
     ));
@@ -188,14 +176,19 @@ class GoogleMap extends Component {
   addMarkers() {
     const family = {...this.props.family};
 
+    let bounds = new this.google.maps.LatLngBounds();
+
     // Add family member markers
     family.members.forEach((member) => {
-      return this.addMarker(member, MarkerType.MEMBER);
+      this.addMarker(member, MarkerType.MEMBER);
+      bounds.extend(member.marker.getPosition());
     });
+
+    this.map.fitBounds(bounds);
 
     // Add family favorites markers
     family.favorites.forEach((favorite) => {
-      return this.addMarker(favorite, MarkerType.FAVORITE);
+      this.addMarker(favorite, MarkerType.FAVORITE);
     });
 
     // Update state
@@ -211,6 +204,7 @@ class GoogleMap extends Component {
         map: this.map,
         title: item.name,
         icon: defaultMarkerIcon,
+        //icon: item.googleImageUrl || defaultMarkerIcon,
         zIndex: 1,
         user: item
       });
@@ -221,7 +215,9 @@ class GoogleMap extends Component {
       // Add circle around favorite markers
       if (markerType === MarkerType.FAVORITE) {
         const circle = new self.google.maps.Circle({
-          radius: Number(self.state.menu.radius),  // metres
+          map: self.map,
+          radius: Number(self.state.menu.radius),
+          visible: false,
           ...circleStyle
         });
         circle.bindTo('center', item.marker, 'position');
@@ -233,7 +229,6 @@ class GoogleMap extends Component {
 
   onMarkerClick(userId, markerType) {
     const markedUser = this.marker.user;
-    console.log('clicked marker: ' + markedUser._id);
     self.props.dispatch(AppActions.setMarked(markedUser, markerType));
   }
 
@@ -250,14 +245,16 @@ class GoogleMap extends Component {
             item.marker.setZIndex(1);
           }
           if (item.circle) {
-            item.circle.setMap(null);
+            item.circle.setVisible(false);
           }
         });
       }
 
       // Set marked
       if (marked) {
-        this.map.panTo({ lat: marked.lat, lng: marked.long });
+        if (!this.map.getBounds().contains(marked.marker.getPosition())) {
+          this.map.panTo({ lat: marked.lat, lng: marked.long });
+        }
         marked.marker.setIcon(markerIconUrl + 'blue' + marked.name.charAt(0).toUpperCase() + '.png');
         marked.marker.setZIndex(this.google.maps.Marker.MAX_ZINDEX + 1);
         if (markerType === MarkerType.MEMBER) {
@@ -267,7 +264,7 @@ class GoogleMap extends Component {
             dest: this.props.marked._id
           });
         } else if (markerType === MarkerType.FAVORITE) {
-          marked.circle.setMap(self.map);
+          marked.circle.setVisible(true);
         }
       }
       this.setState({ marked: this.props.marked });

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import './Drawer.css';
 
 import Dialog from '../Dialog/Dialog';
+import Settings from '../Settings/Settings';
 
 import account from '../../img/account_blue.svg';
 import star from '../../img/star_amber.svg';
@@ -23,12 +25,17 @@ class Drawer extends Component {
     this.state = {
       showSignOutDialog: false,
       showDeleteFavoriteDialog: false,
-      favoriteToDelete: undefined
+      favoriteToDelete: undefined,
+      showSettings: false
     }
   }
 
   openSettings() {
-    this.props.dispatch(AppActions.openSettings());
+    this.setState({ showSettings: true })
+  }
+
+  closeSettings() {
+    this.setState({ showSettings: false })
   }
 
   requestOne(src, dest) {
@@ -93,44 +100,53 @@ class Drawer extends Component {
 
     let details;
     const { marked } = this.props;
-    if (this.props.markerType === 'MEMBER') {
-      details =
-        <div key={marked._id}>
-          <span className='row'>
-            <img src={marked.email ? email : google} role='presentation' />
-            <img src={marked.imageUrl || marked.googleImageUrl || account} role='presentation' />
-            <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
-          </span>
-          <span className='row'>{marked.name}</span>
-          <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
-          <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
-          <span className='row'>
-            Last updated: {marked.lastUpdated}
-          </span>
-        </div>
-    } else if (this.props.markerType === 'FAVORITE') {
-      details =
-        <div key={marked._id}>
-          <span className='row'>
-            <img src={star} role='presentation' />
-            <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
-          </span>
-          <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
-          <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
-          <button className='button button--red button--small'
-            style={{marginTop: '4px'}}
-            onClick={() => this.setState({
-              favoriteToDelete: marked,
-              showDeleteFavoriteDialog: true
-            })}>
-            <img src={bin} role='presentation' />
-            Delete
-          </button>
-        </div>
+    if (marked) {
+      if (this.props.markerType === 'MEMBER') {
+        details =
+          <div key={marked._id}>
+            <span className='row'>
+              <img src={marked.email ? email : google} role='presentation' />
+              <img src={marked.imageUrl || marked.googleImageUrl || account} role='presentation' />
+              <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
+            </span>
+            <span className='row'>{marked.name}</span>
+            <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
+            <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
+            <span className='row'>
+              Last updated: {marked.lastUpdated}
+            </span>
+          </div>
+      } else if (this.props.markerType === 'FAVORITE') {
+        details =
+          <div key={marked._id}>
+            <span className='row'>
+              <img src={star} role='presentation' />
+              <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
+            </span>
+            <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
+            <span className='row'><i>long: </i><tt>{marked.long}</tt></span>
+            <button className='button button--red button--small'
+              style={{marginTop: '4px'}}
+              onClick={() => this.setState({
+                favoriteToDelete: marked,
+                showDeleteFavoriteDialog: true
+              })}>
+              <img src={bin} role='presentation' />
+              Delete
+            </button>
+          </div>
+      }
     }
     return (
       <div className='drawer'>
-        <div style={{overflowY: 'auto', overflowX: 'hidden'}}>
+        <ReactCSSTransitionGroup
+          component='div'
+          transitionName='drawer'
+          style={{overflowY: 'auto', overflowX: 'hidden'}}
+          transitionEnter={false}
+          transitionLeave={false}
+          transitionAppear={true}
+          transitionAppearTimeout={500}>
           <div className='list list--divider'>
             <div className='list__title'>
               <h4>
@@ -162,7 +178,7 @@ class Drawer extends Component {
               Sign out
             </button>
           </div>
-        </div>
+        </ReactCSSTransitionGroup>
         {
           this.props.marked &&
           <div className='drawer__segment details'>
@@ -188,6 +204,9 @@ class Drawer extends Component {
           { this.state.favoriteToDelete && this.state.favoriteToDelete.name }
           "?
         </Dialog>
+        <Settings
+          show={this.state.showSettings}
+          onClose={this.closeSettings.bind(this)} />
       </div>
     );
   }
