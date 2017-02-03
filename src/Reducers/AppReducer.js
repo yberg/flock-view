@@ -5,7 +5,7 @@ const initialState = {
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case 'SIGN_OUT':
-      return {...initialState}
+      return { ...initialState }
     case 'SET_MARKED':
       return {
         ...state,
@@ -13,7 +13,7 @@ export default function reducer(state=initialState, action) {
         markerType: action.payload.markerType
       }
     case 'DELETE_FAVORITE':
-      return {...state, marked: undefined, markerType: undefined}
+      return { ...state, marked: undefined, markerType: undefined }
     default:
       return state
   }

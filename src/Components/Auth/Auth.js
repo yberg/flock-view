@@ -19,9 +19,14 @@ class Auth extends Component {
   constructor(props) {
     super(props);
     self = this;
+    this.state = { email: '' };
   }
 
   componentDidMount() {
+    const user = cookie.load('user');
+    if (user) {
+      this.setState({ email: user.email });
+    }
     window.onGoogleSignIn = onGoogleSignIn;
     window.onFailure = onFailure;
     window.start = this.start;
@@ -67,12 +72,16 @@ class Auth extends Component {
     const passwordRepeat = t.passwordRepeat.value;
     if (password === passwordRepeat) {
       this.props.dispatch(UserActions.register(
-        {email, firstName, lastName, password},
+        { email, firstName, lastName, password },
         this.props.onRegister
       ));
     } else {
       console.log('Passwords do not match');
     }
+  }
+
+  handleChange(e) {
+    this.setState({ email: e.target.value });
   }
 
   render() {
@@ -87,7 +96,8 @@ class Auth extends Component {
               <div className='input-group input-group--elevated'>
                 <div className='input-group__row'>
                   <img src={email} role='presentation' />
-                  <input type='email' name='email' placeholder='Email' required />
+                  <input type='email' name='email' placeholder='Email' required
+                    value={this.state.email} onChange={this.handleChange.bind(this)} />
                 </div>
                 <div className='input-group__row'>
                   <img src={lock} role='presentation' />

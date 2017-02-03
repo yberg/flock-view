@@ -1,17 +1,18 @@
-import jsonp from 'jsonp';
-import request from 'request';
+import 'whatwg-fetch'
 
 export function loadFamily(familyId, callback) {
   return function(dispatch) {
     const family = {};
-    jsonp('http://localhost:3001/family/' + familyId, null, (err, data) => {
-      if (err) {
-        console.log('error: ' + err.message);
-      } else {
-        if (data.success) {
-          family.id = data._id;
-          family.name = data.name;
-          family.favorites = data.favorites;
+    fetch('/api/family/' + familyId, {
+        credentials: 'same-origin'
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log('loadFamily response', response);
+        if (response.success) {
+          family.id = response._id;
+          family.name = response.name;
+          family.favorites = response.favorites;
           if (family.members) {
             dispatch({
               type: 'UPDATE_FAMILY',
@@ -24,14 +25,18 @@ export function loadFamily(familyId, callback) {
             callback();
           }
         }
-      }
-    });
-    jsonp('http://localhost:3001/user?familyId=' + familyId, null, (err, data) => {
-      if (err) {
-        console.log('error: ' + err.message);
-      } else {
-        if (data.success) {
-          family.members = data.users;
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
+
+    fetch('/api/user?familyId=' + familyId, {
+        credentials: 'same-origin'
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          family.members = response.users;
           if (family.favorites) {
             dispatch({
               type: 'UPDATE_FAMILY',
@@ -44,59 +49,69 @@ export function loadFamily(familyId, callback) {
             callback();
           }
         }
-      }
-    });
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
   }
 }
 
 export function addFavorite(user, favorite, callback) {
   return function(dispatch) {
-    request.post('http://localhost:3001/family/' + user.familyId + '/addFavorite', {
-      form: {
-        _id: user._id,
-        name: favorite.name,
-        lat: favorite.lat,
-        long: favorite.long,
-        radius: favorite.radius,
-      }
-    }, (err, httpResponse, body) => {
-      if (err) {
-        console.log('error: ' + err.message);
-      } else {
-        body = JSON.parse(body);
-        if (body.success) {
-          delete body.success;
-          delete body.message;
+    fetch('/api/family/' + user.familyId + '/addFavorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          _id: user._id,
+          name: favorite.name,
+          lat: favorite.lat,
+          long: favorite.long,
+          radius: favorite.radius,
+        })
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          delete response.success;
+          delete response.message;
           dispatch({
             type: 'ADD_FAVORITE',
             payload: {
-              favorite: body
+              favorite: response
             }
           });
           if (callback) {
-            callback(body);
+            callback(response);
           }
         } else {
-          console.log(body);
+          console.log(response);
         }
-      }
-    });
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
   }
 }
 
 export function deleteFavorite(user, favorite, callback) {
   return function(dispatch) {
-    request.post('http://localhost:3001/family/' + user.familyId + '/deleteFavorite', {
-      form: {
-        _id: user._id,
-        favoriteId: favorite._id,
-      }
-    }, (err, httpResponse, body) => {
-      if (err) {
-        console.log('error: ' + err.message);
-      } else {
-        body = JSON.parse(body);
-        if (body.success) {
+    fetch('/api/family/' + user.familyId + '/deleteFavorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          _id: user._id,
+          favoriteId: favorite._id,
+        })
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
           dispatch({
             type: 'DELETE_FAVORITE',
             payload: {
@@ -104,13 +119,15 @@ export function deleteFavorite(user, favorite, callback) {
             }
           });
           if (callback) {
-            callback(body);
+            callback(response);
           }
         } else {
-          console.log(body);
+          console.log(response);
         }
-      }
-    });
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
   }
 }
 

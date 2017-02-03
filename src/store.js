@@ -15,4 +15,5 @@ export default createStore(
       favorites: []
     }
   },
-  middleware);
+  middleware
+);

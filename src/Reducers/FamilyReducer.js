@@ -9,9 +9,9 @@ const initialState = {
 export default function reducer(state=initialState, action) {
   switch (action.type) {
     case 'UPDATE_FAMILY':
-      return {...state, ...action.payload.family}
+      return { ...state, ...action.payload.family }
     case 'SIGN_OUT':
-      return {...initialState}
+      return { ...initialState }
     case 'UPDATE_ONE':
       return {
         ...state,
@@ -31,7 +31,8 @@ export default function reducer(state=initialState, action) {
     case 'ADD_FAVORITE':
       return {
         ...state,
-        favorites: [...state.favorites, action.payload.favorite]}
+        favorites: [ ...state.favorites, action.payload.favorite ]
+      }
     case 'DELETE_FAVORITE':
       return {
         ...state,

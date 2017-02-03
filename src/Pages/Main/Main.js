@@ -15,7 +15,9 @@ class Main extends Component {
   init(user) {
     this.props.dispatch(SystemActions.initSocket(user));
     this.props.dispatch(signIn(user));
-    cookie.save('user', user, { path: '/' });
+    // if (user.email) {
+    //   cookie.save('user', { _id: user._id, email: user.email }, { path: '/' });
+    // }
   }
 
   signOut() {
@@ -26,6 +28,7 @@ class Main extends Component {
       this.props.dispatch(SystemActions.setGapi(undefined));
     }
     this.props.dispatch(SystemActions.closeSocket());
+    cookie.remove('user', { path: '/' });
   }
 
   render() {
