@@ -1,13 +1,8 @@
-.container--center {
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  height: 100%;
+.main {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10; }
+  height: 100%;
+  align-items: stretch;
+  overflow: hidden;
+  background: url(../../img/bg.jpg); }
 
 /*# sourceMappingURL=Main.css.map */

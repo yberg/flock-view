@@ -8,21 +8,13 @@
   .dialog .card {
     box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
     pointer-events: all; }
-    .dialog .card .card__header a {
-      font-size: 28px;
-      color: #616161;
-      text-decoration: none;
-      margin-top: -4px;
-      cursor: pointer; }
-      .dialog .card .card__header a:hover {
-        color: #e53935; }
 
 .dialog-enter {
   margin-top: -220px; }
 
 .dialog-enter.dialog-enter-active {
   margin-top: 0;
-  transition: 200ms ease-out; }
+  transition: 200ms ease; }
 
 .dialog-leave.dialog-leave-active {
   margin-top: -220px;

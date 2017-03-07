@@ -19,15 +19,17 @@ class Settings extends Component {
   editUser(e) {
     e.preventDefault();
     const t = e.target;
-    if (t.newPassword.value === t.newPasswordRepeat.value) {
-      this.props.dispatch(editUser({
-        _id: this.props.user._id,
-        name: t.name.value,
-        password: t.password.value,
-        newPassword: t.newPassword.value,
-      }, this.props.onClose));
-    } else {
-      console.log('Passwords does not match');
+    if (t.newPassword) {
+      if (t.newPassword.value === t.newPasswordRepeat.value) {
+        this.props.dispatch(editUser({
+          _id: this.props.user._id,
+          name: t.name.value,
+          password: t.password.value,
+          newPassword: t.newPassword.value,
+        }, this.props.onClose));
+      } else {
+        console.log('Passwords does not match');
+      }
     }
   }
 
@@ -47,24 +49,34 @@ class Settings extends Component {
 
                 <div className='card__header'>
                   <h4>
-                    <img src={settings} role='presentation' />
+                    <i className='fa fa-cog' />
                     Settings
-                    <a onClick={this.props.onClose} className='push-right'>&times;</a>
                   </h4>
+                  <a onClick={this.props.onClose} className='card__header__link'>
+                    <i className='fa fa-times' />
+                  </a>
                 </div>
 
                 <div className='card__body'>
                   <div className='card__body__segment'>
-                    <span className='input-label'>Name</span>
+                    <span className='input__label'>Name</span>
                     <div className='input-container'>
-                      <img src={account} role='presentation' />
+                      <div className='input__icon'>
+                        <i className='fa fa-user' />
+                      </div>
                       <input type='text' name='name' className='input--small'
                         disabled={this.props.user.gmail}
                         placeholder={this.props.user.name} />
                     </div>
-                    <span className='input-label'>Email</span>
+                    <span className='input__label'>Email</span>
                     <div className='input-container'>
-                      <img src={this.props.user.gmail ? google : email} role='presentation' />
+                      <div className='input__icon'>
+                        {
+                          this.props.user.gmail ?
+                            <img src={google} role='presentation' />
+                          : <i className='fa fa-envelope' />
+                        }
+                      </div>
                       <input type='text' className='input--small'
                         disabled
                         placeholder={this.props.user.email || this.props.user.gmail} />
@@ -72,18 +84,25 @@ class Settings extends Component {
                   </div>
 
                   <div className='card__body__segment'>
-                    <span className='input-label'>Picture</span>
+                    <span className='input__label'>Picture</span>
                     <div style={{display: 'flex'}}>
                       <div>
-                        <img src={this.props.user.imageUrl || this.props.user.googleImageUrl || defaultProfilePic}
-                          className='round'
-                          style={{height: '100px'}}
-                          role='presentation' />
+                        {
+                          this.props.user.imageUrl || this.props.user.googleImageUrl ?
+                            <img src={this.props.user.imageUrl || this.props.user.googleImageUrl}
+                              className='round'
+                              style={{height: '100px', width: '100px'}}
+                              role='presentation' />
+                            : <i className='fa fa-user'
+                                style={{height: '100px', width: '100px', fontSize: '100px'}} />
+                        }
                       </div>
                       <div style={{flex: 1, marginLeft: '20px'}}>
-                        <span className='input-label'>Image URL</span>
+                        <span className='input__label'>Image URL</span>
                         <div className='input-container'>
-                          <img src={image} role='presentation' />
+                          <div className='input__icon'>
+                            <i className='fa fa-picture-o' />
+                          </div>
                           <input type='text' name='imageUrl'
                             className='input--small'
                             placeholder='Image url' />
@@ -95,20 +114,26 @@ class Settings extends Component {
                   {
                     this.props.user.email &&
                     <div className='card__body__segment'>
-                      <span className='input-label'>Change password</span>
+                      <span className='input__label'>Change password</span>
                       <div className='input-group input-group--elevated'>
                         <div className='input-group__row'>
-                          <img src={lock} role='presentation' />
+                          <div className='input__icon'>
+                            <i className='fa fa-lock' />
+                          </div>
                           <input type='password' name='password' className='input--small'
                             placeholder='Current password' />
                         </div>
                         <div className='input-group__row'>
-                          <img src={lock} role='presentation' />
+                          <div className='input__icon'>
+                            <i className='fa fa-lock' />
+                          </div>
                           <input type='password' name='newPassword' className='input--small'
                             placeholder='New password' />
                         </div>
                         <div className='input-group__row'>
-                          <img src={lock} role='presentation' />
+                          <div className='input__icon'>
+                            <i className='fa fa-lock' />
+                          </div>
                           <input type='password' name='newPasswordRepeat' className='input--small'
                             placeholder='Repeat new password' />
                         </div>
@@ -119,13 +144,13 @@ class Settings extends Component {
 
                 <div className='card__footer'>
                   <button className='button button--blue' type='submit'>
-                    <img src={done} role='presentation' />
-                    Save
+                    <i className='fa fa-check' />
+                    <span>Save</span>
                   </button>
-                  <button className='button'
+                  <button type='button' className='button'
                     onClick={this.props.onClose}>
-                    <img src={clear} role='presentation' />
-                    Cancel
+                    <i className='fa fa-times' />
+                    <span>Cancel</span>
                   </button>
                 </div>
               </form>

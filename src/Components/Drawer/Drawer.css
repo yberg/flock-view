@@ -10,8 +10,10 @@
   box-sizing: border-box; }
   .drawer .drawer__segment {
     padding: 10px 20px; }
-  .drawer .list .list__item img {
-    border-radius: 100px; }
+  .drawer .list a.list__item {
+    cursor: pointer; }
+    .drawer .list a.list__item img {
+      border-radius: 100px; }
   .drawer .details {
     position: relative;
     padding: 20px;
@@ -26,10 +28,13 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
     .drawer .details span.row {
       display: block; }
-    .drawer .details span img {
+    .drawer .details span.header img {
       height: 20px;
       border-radius: 100px;
       vertical-align: middle;
+      margin-right: 8px; }
+    .drawer .details span.header i {
+      font-size: 18px;
       margin-right: 8px; }
   .drawer ::-webkit-scrollbar {
     width: 12px; }

@@ -20,13 +20,15 @@ class Auth extends Component {
     super(props);
     self = this;
     this.state = { email: '' };
+
+    const user = cookie.load('user');
+    if (user) {
+      this.state = { email: user.email };
+      this.props.dispatch(UserActions.signInWithSession(user._id, this.props.onSignIn));
+    }
   }
 
   componentDidMount() {
-    const user = cookie.load('user');
-    if (user) {
-      this.setState({ email: user.email });
-    }
     window.onGoogleSignIn = onGoogleSignIn;
     window.onFailure = onFailure;
     window.start = this.start;
@@ -57,7 +59,7 @@ class Auth extends Component {
     const email = e.target.email.value;
     const password = e.target.password.value;
     this.props.dispatch(UserActions.signInWithEmail(
-      {email, password},
+      { email, password },
       this.props.onSignIn
     ));
   }
@@ -95,20 +97,24 @@ class Auth extends Component {
             <form onSubmit={this.signInWithEmail.bind(this)}>
               <div className='input-group input-group--elevated'>
                 <div className='input-group__row'>
-                  <img src={email} role='presentation' />
+                  <div className='input__icon'>
+                    <i className='fa fa-envelope gray' />
+                  </div>
                   <input type='email' name='email' placeholder='Email' required
                     value={this.state.email} onChange={this.handleChange.bind(this)} />
                 </div>
                 <div className='input-group__row'>
-                  <img src={lock} role='presentation' />
+                  <div className='input__icon'>
+                    <i className='fa fa-lock lock' />
+                  </div>
                   <input type='password' name='password' placeholder='Password' />
                 </div>
               </div>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <button className='button button--blue'
                   style={{float: 'left'}}>
-                  <img src={done} role='presentation' />
-                  Sign in
+                  <i className='fa fa-check' />
+                  <span>Sign in</span>
                 </button>
                 <div id='my-signin2'></div>
               </div>
@@ -121,29 +127,39 @@ class Auth extends Component {
               <form onSubmit={this.register.bind(this)}>
                 <div className='input-group input-group--elevated'>
                   <div className='input-group__row'>
-                    <img src={email} role='presentation' />
+                    <div className='input__icon'>
+                      <i className='fa fa-envelope gray' />
+                    </div>
                     <input type='email' name='email' placeholder='Email' required />
                   </div>
                   <div className='input-group__row'>
-                    <img src={account} role='presentation' />
+                    <div className='input__icon'>
+                      <i className='fa fa-user gray' />
+                    </div>
                     <input type='text' name='firstName' placeholder='First name' required />
                   </div>
                   <div className='input-group__row'>
-                    <img src={account} role='presentation' />
+                    <div className='input__icon'>
+                      <i className='fa fa-user gray' />
+                    </div>
                     <input type='text' name='lastName' placeholder='Last name' required />
                   </div>
                   <div className='input-group__row'>
-                    <img src={lock} role='presentation' />
+                    <div className='input__icon'>
+                      <i className='fa fa-lock gray' />
+                    </div>
                     <input type='password' name='password' placeholder='Password' required />
                   </div>
                   <div className='input-group__row'>
-                    <img src={lock} role='presentation' />
+                    <div className='input__icon'>
+                      <i className='fa fa-lock gray' />
+                    </div>
                     <input type='password' name='passwordRepeat' placeholder='Repeat password' required />
                   </div>
                 </div>
                 <button className='button button--green'>
-                  <img src={done} role='presentation' />
-                  Register
+                  <i className='fa fa-check' />
+                  <span>Register</span>
                 </button>
               </form>
             </div>

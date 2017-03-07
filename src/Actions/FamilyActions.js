@@ -3,7 +3,7 @@ import 'whatwg-fetch'
 export function loadFamily(familyId, callback) {
   return function(dispatch) {
     const family = {};
-    fetch('/api/family/' + familyId, {
+    fetch(`/api/family/${familyId}`, {
         credentials: 'same-origin'
       })
       .then((response) => response.json())
@@ -13,6 +13,7 @@ export function loadFamily(familyId, callback) {
           family.id = response._id;
           family.name = response.name;
           family.favorites = response.favorites;
+          family.chat = response.chat;
           if (family.members) {
             dispatch({
               type: 'UPDATE_FAMILY',
@@ -27,10 +28,10 @@ export function loadFamily(familyId, callback) {
         }
       })
       .catch((error) => {
-        console.log('error: ' + error.message);
+        console.log('error:', error);
       });
 
-    fetch('/api/user?familyId=' + familyId, {
+    fetch(`/api/user?familyId=${familyId}`, {
         credentials: 'same-origin'
       })
       .then((response) => response.json())
@@ -51,14 +52,79 @@ export function loadFamily(familyId, callback) {
         }
       })
       .catch((error) => {
-        console.log('error: ' + error.message);
+        console.log('error:', error);
       });
+  }
+}
+
+export function loadChat(familyId, callback) {
+  console.log('loadChat', familyId);
+  return function(dispatch) {
+    fetch(`/api/family/${familyId}/chat`, {
+        credentials: 'same-origin'
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          const { chat } = response;
+          dispatch({
+            type: 'UPDATE_CHAT',
+            payload: {
+              chat
+            }
+          });
+          if (callback) {
+            callback(chat);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('error: ', error.message);
+      });
+  }
+}
+
+export function sendChatMessage(text, { _id }, familyId, callback) {
+  console.log('in sendMessage')
+  return function(dispatch) {
+    fetch(`/api/family/${familyId}/chat/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          _id,
+          text
+        })
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.success) {
+          dispatch(addChatMessage(response));
+          if (callback) {
+            callback(response);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('error:', error);
+      });
+  }
+}
+
+export function addChatMessage(message) {
+  return {
+    type: 'ADD_CHAT_MESSAGE',
+    payload: {
+      message
+    }
   }
 }
 
 export function addFavorite(user, favorite, callback) {
   return function(dispatch) {
-    fetch('/api/family/' + user.familyId + '/addFavorite', {
+    fetch(`/api/family/${user.familyId}/addFavorite`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -91,7 +157,7 @@ export function addFavorite(user, favorite, callback) {
         }
       })
       .catch((error) => {
-        console.log('error: ' + error.message);
+        console.log('error:', error);
       });
   }
 }
@@ -126,7 +192,7 @@ export function deleteFavorite(user, favorite, callback) {
         }
       })
       .catch((error) => {
-        console.log('error: ' + error.message);
+        console.log('error:', error);
       });
   }
 }

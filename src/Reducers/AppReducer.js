@@ -1,5 +1,5 @@
 const initialState = {
-  marked: undefined,
+  marked: {},
 };
 
 export default function reducer(state=initialState, action) {
@@ -13,7 +13,7 @@ export default function reducer(state=initialState, action) {
         markerType: action.payload.markerType
       }
     case 'DELETE_FAVORITE':
-      return { ...state, marked: undefined, markerType: undefined }
+      return { ...state, marked: {}, markerType: undefined }
     default:
       return state
   }

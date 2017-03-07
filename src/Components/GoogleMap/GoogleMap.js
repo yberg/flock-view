@@ -78,6 +78,7 @@ class GoogleMap extends Component {
       zoom: 14,
       center: home
     });
+    self.props.dispatch(SystemActions.setMap(self.map));
 
     const marker = new self.google.maps.Marker({
       map: self.map,
@@ -232,6 +233,14 @@ class GoogleMap extends Component {
     self.props.dispatch(AppActions.setMarked(markedUser, markerType));
   }
 
+  requestOne(src, dest) {
+    console.log('requestOne(' + src + ', ' + dest + ')');
+    this.props.socket.emit('requestOne', {
+      src,
+      dest
+    });
+  }
+
   componentDidUpdate() {
     const { marked, markerType } = this.props;
     if (marked !== this.state.marked) {
@@ -251,18 +260,14 @@ class GoogleMap extends Component {
       }
 
       // Set marked
-      if (marked) {
+      if (marked._id) {
         if (!this.map.getBounds().contains(marked.marker.getPosition())) {
           this.map.panTo({ lat: marked.lat, lng: marked.long });
         }
         marked.marker.setIcon(markerIconUrl + 'blue' + marked.name.charAt(0).toUpperCase() + '.png');
         marked.marker.setZIndex(this.google.maps.Marker.MAX_ZINDEX + 1);
         if (markerType === MarkerType.MEMBER) {
-          console.log('requestOne(' + this.props.user._id + ', ' + this.props.marked._id + ')');
-          this.props.socket.emit('requestOne', {
-            src: this.props.user._id,
-            dest: this.props.marked._id
-          });
+          this.requestOne(this.props.user._id, marked._id);
         } else if (markerType === MarkerType.FAVORITE) {
           marked.circle.setVisible(true);
         }

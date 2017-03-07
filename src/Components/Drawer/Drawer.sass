@@ -15,8 +15,12 @@
   .drawer__segment
     padding: 10px 20px
 
-  .list .list__item img
-    border-radius: 100px
+  .list
+    a.list__item
+      cursor: pointer
+
+      img
+        border-radius: 100px
 
   .details
     position: relative
@@ -36,11 +40,16 @@
       &.row
         display: block
 
-      img
-        height: 20px
-        border-radius: 100px
-        vertical-align: middle
-        margin-right: 8px
+      &.header
+        img
+          height: 20px
+          border-radius: 100px
+          vertical-align: middle
+          margin-right: 8px
+
+        i
+          font-size: 18px
+          margin-right: 8px
 
   ::-webkit-scrollbar
     width: 12px

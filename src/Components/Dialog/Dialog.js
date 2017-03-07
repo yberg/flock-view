@@ -21,10 +21,12 @@ export default class Dialog extends Component {
               <div className='card__header'>
                 <h4>
                   { this.props.icon &&
-                    <img src={this.props.icon} role='presentation' /> }
+                    <i className={'fa fa-' + this.props.icon} /> }
                   { this.props.title }
-                  <a onClick={this.props.onClose} className='push-right'>&times;</a>
                 </h4>
+                <a onClick={this.props.onClose} className='card__header__link'>
+                  <i className='fa fa-times' />
+                </a>
               </div>
               <div className='card__body'>
                 { this.props.children }
@@ -32,13 +34,13 @@ export default class Dialog extends Component {
               <div className='card__footer'>
                 <button className='button button--green'
                   onClick={() => {this.props.onConfirm(); this.props.onClose()}}>
-                  <img src={done} role='presentation' />
-                  Yes
+                  <i className='fa fa-check' />
+                  <span>Yes</span>
                 </button>
                 <button className='button button--red'
                   onClick={this.props.onClose}>
-                  <img src={clear} role='presentation' />
-                  Cancel
+                  <i className='fa fa-times' />
+                  <span>Cancel</span>
                 </button>
               </div>
             </div>

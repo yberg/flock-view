@@ -13,40 +13,22 @@
     @include box-shadow--large
     pointer-events: all
 
-    .card__header a
-      font-size: 28px
-      color: $gray700
-      text-decoration: none
-      margin-top: -4px
-      cursor: pointer
+  .input__icon
+    width: 18px
+    height: 18px
 
-      &:hover
-        color: $red600
+    i
+      font-size: 18px
 
-    .input-container
-      position: relative
-      margin-bottom: 10px
+  .settings-enter
+    margin-top: -620px
 
-      img
-        position: absolute
-        z-index: 2
-        height: 20px
-        left: 8px
-        top: calc(50% - 10px)
-        pointer-events: none
+  .settings-enter.settings-enter-active
+    margin-top: 0
+    transition: 200ms ease
 
-      input
-        padding-left: 36px
+  .settings-leave
 
-.settings-enter
-  margin-top: -620px
-
-.settings-enter.settings-enter-active
-  margin-top: 0
-  transition: 200ms ease-out
-
-.settings-leave
-
-.settings-leave.settings-leave-active
-  margin-top: -620px
-  transition: 200ms ease-in
+  .settings-leave.settings-leave-active
+    margin-top: -620px
+    transition: 200ms ease-in

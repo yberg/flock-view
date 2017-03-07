@@ -1,32 +1,5 @@
 import 'whatwg-fetch'
 
-export function editUser(user, callback) {
-  return function(dispatch) {
-    fetch('/api/user/' + user._id + '/edit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'same-origin',
-        body: JSON.stringify({
-          _id: user._id,
-          password: user.password,
-          newPassword: user.newPassword
-        })
-      })
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        if (response.success) {
-          callback(user);
-        }
-      })
-      .catch((error) => {
-        console.log('error: ' + error.message);
-      });
-  }
-}
-
 export function signInWithEmail({email, password}, callback) {
   return function(dispatch) {
     fetch('/api/auth', {
@@ -86,7 +59,32 @@ export function signInWithGoogle(googleUser, callback) {
   }
 }
 
-export function register({email, firstName, lastName, password}, callback) {
+export function signInWithSession(_id, callback) {
+  return function(dispatch) {
+    fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          _id
+        })
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        const user = response;
+        if (callback) {
+          callback(user);
+        }
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
+  }
+}
+
+export function register({ email, firstName, lastName, password }, callback) {
   return function(dispatch) {
     fetch('/api/register', {
         method: 'POST',
@@ -106,6 +104,33 @@ export function register({email, firstName, lastName, password}, callback) {
         console.log('Register response:', response);
         if (response.success) {
           callback(response);
+        }
+      })
+      .catch((error) => {
+        console.log('error: ' + error.message);
+      });
+  }
+}
+
+export function editUser(user, callback) {
+  return function(dispatch) {
+    fetch('/api/user/' + user._id + '/edit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          _id: user._id,
+          password: user.password,
+          newPassword: user.newPassword
+        })
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        if (response.success) {
+          callback(user);
         }
       })
       .catch((error) => {

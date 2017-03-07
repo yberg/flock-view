@@ -12,7 +12,11 @@ export default createStore(
   {
     family: {
       members: [],
-      favorites: []
+      favorites: [],
+      chat: []
+    },
+    app: {
+      marked: {}
     }
   },
   middleware

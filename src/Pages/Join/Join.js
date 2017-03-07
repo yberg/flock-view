@@ -7,14 +7,18 @@ import { joinFamily } from '../../Actions/UserActions';
 
 class Join extends Component {
   join(user) {
-    this.props.dispatch(joinFamily({
-        _id: user._id,
-        email: user.email,
-        gmail: user.gmail,
-      },
-      this.props.routeParams.familyId,
-      () => this.props.router.push('/')
-    ));
+    if (this.props.routeParams.familyId) {
+      this.props.dispatch(joinFamily({
+          _id: user._id,
+          email: user.email,
+          gmail: user.gmail,
+        },
+        this.props.routeParams.familyId,
+        () => this.props.router.push('/')
+      ));
+    } else {
+      console.log('No family id in URL');
+    }
   }
 
   render() {

@@ -9,34 +9,61 @@
   .navbar * {
     box-sizing: border-box; }
   .navbar .navbar__title {
+    display: flex;
+    align-items: center;
     width: 250px;
     padding-left: 20px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     line-height: 60px; }
     .navbar .navbar__title img {
-      vertical-align: middle;
       height: 32px;
-      margin-right: 8px; }
+      margin-right: 12px; }
+    .navbar .navbar__title i {
+      font-size: 36px;
+      margin-right: 12px; }
   .navbar .navbar__body {
+    display: flex;
     flex: 1;
+    justify-content: space-between;
     line-height: 60px; }
     .navbar .navbar__body ul {
       list-style: none;
       margin: 0;
       padding: 0; }
       .navbar .navbar__body ul li {
-        display: inline-block; }
-        .navbar .navbar__body ul li span {
-          padding: 20px 8px;
-          font-size: 18px;
-          font-weight: 500; }
-          .navbar .navbar__body ul li span img {
-            vertical-align: middle;
-            margin-right: 12px;
-            height: 28px; }
-            .navbar .navbar__body ul li span img:not(:first-child) {
-              border-radius: 100px; }
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 500;
+        padding: 0 10px; }
+        .navbar .navbar__body ul li i {
+          font-size: 28px;
+          margin-right: 12px; }
+        .navbar .navbar__body ul li img {
+          vertical-align: middle;
+          margin-right: 12px;
+          height: 28px; }
+          .navbar .navbar__body ul li img:not(:first-child) {
+            border-radius: 100px; }
+    .navbar .navbar__body .menu {
+      display: flex;
+      margin-right: 20px; }
+      .navbar .navbar__body .menu a {
+        padding: 0 10px;
+        transition: background 250ms ease-out; }
+        .navbar .navbar__body .menu a:hover {
+          background: rgba(255, 255, 255, 0.05);
+          transition: background 75ms ease-out; }
+        .navbar .navbar__body .menu a:active {
+          background: rgba(255, 255, 255, 0.15); }
+        .navbar .navbar__body .menu a.active {
+          background: rgba(255, 255, 255, 0.1); }
+        .navbar .navbar__body .menu a i {
+          font-size: 32px;
+          vertical-align: middle; }
+        .navbar .navbar__body .menu a img {
+          vertical-align: middle; }
 
 .navbar-appear {
   margin-top: -10px;

@@ -3,6 +3,7 @@ const initialState = {
   name: undefined,
   favorites: [],
   members: [],
+  chat: [],
   fetching: false
 }
 
@@ -39,6 +40,16 @@ export default function reducer(state=initialState, action) {
         favorites: state.favorites.filter((favorite) => {
           return favorite._id !== action.payload.favorite._id;
         })
+      }
+    case 'UPDATE_CHAT':
+      return {
+        ...state,
+        chat: action.payload.chat
+      }
+    case 'ADD_CHAT_MESSAGE':
+      return {
+        ...state,
+        chat: state.chat.concat(action.payload.message)
       }
     default:
       return state

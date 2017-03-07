@@ -9,6 +9,15 @@ export function setGoogle(google) {
   }
 }
 
+export function setMap(map) {
+  return {
+    type: 'SET_MAP',
+    payload: {
+      map
+    }
+  }
+}
+
 export function setGapi(gapi) {
   return {
     type: 'SET_GAPI',
@@ -30,17 +39,19 @@ export function setSocket(socket) {
 export function initSocket(user) {
   return function(dispatch) {
     // Init socket
-    console.log('http://localhost:3001, query:_id=' + user._id);
-    const socket = io('http://localhost:3001', {query: '_id=' + user._id});
+    console.log('/, query:_id=' + user._id);
+    const socket = io('/', {query: '_id=' + user._id});
     socket.on('newConnection', (data) => {
       console.log(data);
     }).on('updateRequest', (data) => {
       // Update self
+      console.log('Received an update request:', data);
       /*socket.emit('updateSelf', {
         _id: 'test_id',
       });*/
     }).on('updatedOne', (data) => {
       // Updated requested user
+      //console.log('Updated one:', data);
       dispatch({
         type: 'UPDATE_ONE',
         payload: {
@@ -48,7 +59,7 @@ export function initSocket(user) {
         }
       });
     }).on('socketError', (data) => {
-      console.log(data);
+      console.log('Error:', data);
     });
     dispatch({
       type: 'INIT_SOCKET',

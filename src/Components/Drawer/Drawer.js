@@ -38,14 +38,6 @@ class Drawer extends Component {
     this.setState({ showSettings: false })
   }
 
-  requestOne(src, dest) {
-    console.log('requestOne(' + src + ', ' + dest + ')');
-    this.props.socket.emit('requestOne', {
-      src: src,
-      dest: dest
-    });
-  }
-
   deleteFavorite(favorite) {
     console.log('Delete', favorite);
     this.props.dispatch(deleteFavorite(
@@ -71,15 +63,15 @@ class Drawer extends Component {
     const familyMembers = family.members && family.members.map((member) => {
       return (
         <a key={member._id}
-          href={'#' + member.name}
-          className={'list__item' + (this.props.marked === member ? ' active active--blue' : '')}
-          onClick={() => {
-            this.props.dispatch(AppActions.setMarked(member, 'MEMBER'));
-            this.requestOne(this.props.user._id, member._id);
-          }}>
-          <img src={member.imageUrl || member.googleImageUrl || account}
-            className='list__item__icon'
-            role='presentation' />
+          className={'list__item' + (this.props.marked._id === member._id ? ' active active--blue' : '')}
+          onClick={() => this.props.dispatch(AppActions.setMarked(member, 'MEMBER'))}>
+          <div className='list__item__icon'>
+            {
+              member.imageUrl || member.googleImageUrl ?
+                <img src={member.imageUrl || member.googleImageUrl} role='presentation' />
+              : <i className='fa fa-user blue' />
+            }
+          </div>
           <span>{member.firstName}</span>
         </a>
       );
@@ -87,12 +79,11 @@ class Drawer extends Component {
     const familyFavorites = family.favorites && family.favorites.map((favorite) => {
       return (
         <a key={favorite._id}
-          href={'#' + favorite.name}
-          className={'list__item' + (this.props.marked === favorite ? ' active active--amber' : '')}
+          className={'list__item' + (this.props.marked._id === favorite._id ? ' active active--amber' : '')}
           onClick={() => this.props.dispatch(AppActions.setMarked(favorite, 'FAVORITE'))}>
-          <img src={star}
-            className='list__item__icon'
-            role='presentation' />
+          <div className='list__item__icon'>
+            <i className='fa fa-star amber' />
+          </div>
           <span>{favorite.name}</span>
         </a>
       );
@@ -104,10 +95,18 @@ class Drawer extends Component {
       if (this.props.markerType === 'MEMBER') {
         details =
           <div key={marked._id}>
-            <span className='row'>
-              <img src={marked.email ? email : google} role='presentation' />
-              <img src={marked.imageUrl || marked.googleImageUrl || account} role='presentation' />
-              <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
+            <span className='row header'>
+              {
+                marked.gmail ?
+                  <img src={google} role='presentation' />
+                : <i className='fa fa-envelope gray' />
+              }
+              {
+                marked.imageUrl || marked.googleImageUrl ?
+                  <img src={marked.imageUrl || marked.googleImageUrl} role='presentation' />
+                : <i className='fa fa-user blue' />
+              }
+              <h5 style={{display: 'inline-block'}}>{marked.firstName}</h5>
             </span>
             <span className='row'>{marked.name}</span>
             <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
@@ -119,8 +118,8 @@ class Drawer extends Component {
       } else if (this.props.markerType === 'FAVORITE') {
         details =
           <div key={marked._id}>
-            <span className='row'>
-              <img src={star} role='presentation' />
+            <span className='row header'>
+              <i className='fa fa-star amber' />
               <h5 style={{display: 'inline-block'}}>{marked.name}</h5>
             </span>
             <span className='row'><i>lat: </i><tt>{marked.lat}</tt></span>
@@ -131,7 +130,7 @@ class Drawer extends Component {
                 favoriteToDelete: marked,
                 showDeleteFavoriteDialog: true
               })}>
-              <img src={bin} role='presentation' />
+              <i className='fa fa-trash' />
               Delete
             </button>
           </div>
@@ -150,7 +149,7 @@ class Drawer extends Component {
           <div className='list list--divider'>
             <div className='list__title'>
               <h4>
-                <img src={people} role='presentation' />
+                <i className='fa fa-users green' />
                 { this.props.family.name }
               </h4>
             </div>
@@ -164,23 +163,23 @@ class Drawer extends Component {
             { familyFavorites }
           </div>
           <div className='list list--divider'>
-            <a onClick={this.openSettings.bind(this)} href='#Settings' className='list__item'>
-              <img src={settings}
-              className='list__item__icon'
-              role='presentation' />
+            <a onClick={this.openSettings.bind(this)} className='list__item'>
+              <div className='list__item__icon'>
+                <i className='fa fa-cog gray' />
+              </div>
               <span>Settings</span>
             </a>
           </div>
           <div className='drawer__segment'>
             <button className='button button--red center'
             onClick={() => this.setState({showSignOutDialog: true})}>
-              <img src={exit} role='presentation' />
-              Sign out
+              <i className='fa fa-sign-out list__item__icon' />
+              <span>Sign out</span>
             </button>
           </div>
         </ReactCSSTransitionGroup>
         {
-          this.props.marked &&
+          this.props.marked._id &&
           <div className='drawer__segment details'>
             { details }
           </div>
@@ -189,7 +188,7 @@ class Drawer extends Component {
         <Dialog
           show={this.state.showSignOutDialog}
           title={'Sign out'}
-          icon={exit}
+          icon={'sign-out'}
           onConfirm={this.signOut.bind(this)}
           onClose={() => this.setState({showSignOutDialog: false})}>
           Do you really want to sign out?
@@ -197,7 +196,7 @@ class Drawer extends Component {
         <Dialog
           show={this.state.showDeleteFavoriteDialog}
           title={'Delete favorite'}
-          icon={bin}
+          icon={'trash'}
           onConfirm={this.deleteFavorite.bind(this, this.state.favoriteToDelete)}
           onClose={() => this.setState({showDeleteFavoriteDialog: false})}>
           Do you really want to delete "

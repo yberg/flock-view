@@ -1,7 +1,4 @@
-.auth {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  background: url(../../img/bg.jpg); }
+.input__icon i {
+  color: #616161 !important; }
 
 /*# sourceMappingURL=Auth.css.map */
